@@ -42,4 +42,8 @@ public class NodeFacade {
     public NodeStatusResponse nodeStatus(String macAddress) {
         return nodeService.nodeStatus(macAddress);
     }
+
+    public NodeStatusResponse nodeStatusById(String nodeId) {
+        return nodeService.nodeStatusById(nodeId);
+    }
 }

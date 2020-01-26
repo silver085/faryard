@@ -34,4 +34,9 @@ public class NodeController extends ApiBaseController {
         return nodeFacade.nodeStatus(macAddress);
     }
 
+    @GetMapping("/statusbyid")
+    public NodeStatusResponse nodeStatusById(@RequestParam String nodeId){
+        return nodeFacade.nodeStatusById(nodeId);
+    }
+
 }

@@ -116,4 +116,15 @@ public class NodeService {
     public void updateNode(Node node) {
         nodeRepository.save(node);
     }
+
+    public NodeStatusResponse nodeStatusById(String nodeId) {
+        Node node = nodeRepository.findById(nodeId).orElse(null);
+        NodeStatusResponse response = new NodeStatusResponse();
+        if(node != null){
+            return this.nodeStatus(node.getNodeMACAddress());
+        }else{
+            response.setNodeExist(false);
+        }
+        return response;
+    }
 }
