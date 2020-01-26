@@ -1,5 +1,6 @@
 package com.faryard.api.facades;
 
+import com.faryard.api.DTO.node.NodeStatusResponse;
 import com.faryard.api.DTO.node.NodeErrorResponse;
 import com.faryard.api.DTO.node.NodePingRequest;
 import com.faryard.api.services.impl.exceptions.NodeAlreadyRegisteredException;
@@ -36,5 +37,9 @@ public class NodeFacade {
 
     public NodeSimpleResponse existNode(String macAddress) {
         return nodeService.existNode(macAddress);
+    }
+
+    public NodeStatusResponse nodeStatus(String macAddress) {
+        return nodeService.nodeStatus(macAddress);
     }
 }

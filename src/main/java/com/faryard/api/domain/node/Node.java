@@ -5,7 +5,9 @@ import org.springframework.data.mongodb.core.index.IndexDirection;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Document("Node")
 public class Node {
@@ -18,6 +20,10 @@ public class Node {
     private Date creationDate;
     private Date lastPingDate;
     private NodeStatus nodeStatus;
+    private Date lastActionCommittedDate;
+    private Date lastActionConfirmedDate;
+
+    private List<NodeAction> actions = new ArrayList<>();
 
     public String getId() {
         return id;
@@ -73,5 +79,29 @@ public class Node {
 
     public void setNodeStatus(NodeStatus nodeStatus) {
         this.nodeStatus = nodeStatus;
+    }
+
+    public Date getLastActionCommittedDate() {
+        return lastActionCommittedDate;
+    }
+
+    public void setLastActionCommittedDate(Date lastActionCommittedDate) {
+        this.lastActionCommittedDate = lastActionCommittedDate;
+    }
+
+    public Date getLastActionConfirmedDate() {
+        return lastActionConfirmedDate;
+    }
+
+    public void setLastActionConfirmedDate(Date lastActionConfirmedDate) {
+        this.lastActionConfirmedDate = lastActionConfirmedDate;
+    }
+
+    public List<NodeAction> getActions() {
+        return actions;
+    }
+
+    public void setActions(List<NodeAction> actions) {
+        this.actions = actions;
     }
 }

@@ -1,5 +1,6 @@
 package com.faryard.api.services.impl.node;
 
+import com.faryard.api.DTO.node.NodeStatusResponse;
 import com.faryard.api.DTO.node.NodePingRequest;
 import com.faryard.api.DTO.node.NodeResponseStatus;
 import com.faryard.api.DTO.node.NodeSimpleResponse;
@@ -13,7 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+import java.time.ZoneId;
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class NodeService {
@@ -78,5 +82,38 @@ public class NodeService {
 
         }
         return response;
+    }
+
+    public NodeStatusResponse nodeStatus(String macAddress) {
+        Node node = nodeRepository.findByNodeMACAddress(macAddress).orElse(null);
+        NodeStatusResponse response = new NodeStatusResponse();
+        if(node != null){
+            response.setNodeExist(true);
+            response.setLastPingDate(node.getLastPingDate());
+            response.setCreationDate(node.getCreationDate());
+            response.setNodeName(node.getNodeName());
+            response.setNodeMACAddress(node.getNodeMACAddress());
+            response.setNodeIP(node.getNodeIP());
+            response.setOnline(node.getNodeStatus().equals(NodeStatus.Online));
+
+           // response.setLastActionCommittedDate(node.getLastActionCommittedDate());
+           // response.setLastActionCommitted(node.getLa);
+        } else {
+            response.setNodeExist(false);
+        }
+
+        return response;
+    }
+
+    public List<Node> getExpiredNodes() {
+        Instant instant = Instant.from(Instant.now()
+                .atZone(ZoneId.of("Europe/Rome"))
+                .minusMinutes(10));  //Date 10 minutes back
+        return nodeRepository.findNodesByLastPingDateBefore(Date.from(instant));
+
+    }
+
+    public void updateNode(Node node) {
+        nodeRepository.save(node);
     }
 }

@@ -1,15 +1,12 @@
 package com.faryard.api.controllers;
 
+import com.faryard.api.DTO.node.NodeStatusResponse;
 import com.faryard.api.DTO.node.NodePingRequest;
 import com.faryard.api.DTO.node.NodeSimpleResponse;
 import com.faryard.api.DTO.node.RegisterNodeRequest;
 import com.faryard.api.facades.NodeFacade;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Locale;
 
 @RestController
 @RequestMapping("/nodeapi/")
@@ -30,6 +27,11 @@ public class NodeController extends ApiBaseController {
     @GetMapping("/existnode")
     public NodeSimpleResponse existNode(@RequestParam String macAddress){
         return nodeFacade.existNode(macAddress);
+    }
+
+    @GetMapping("/status")
+    public NodeStatusResponse nodeStatus(@RequestParam String macAddress){
+        return nodeFacade.nodeStatus(macAddress);
     }
 
 }
