@@ -27,4 +27,9 @@ public class NodeController extends ApiBaseController {
         return nodeFacade.registerNode(request);
     }
 
+    @GetMapping("/existnode")
+    public NodeSimpleResponse existNode(@RequestParam String macAddress){
+        return nodeFacade.existNode(macAddress);
+    }
+
 }

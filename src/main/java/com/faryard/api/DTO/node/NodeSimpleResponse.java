@@ -4,6 +4,7 @@ public class NodeSimpleResponse {
     private String nodeId;
     private NodeResponseStatus status;
     private String message;
+    private NodeAction requiredAction;
 
     public String getNodeId() {
         return nodeId;
@@ -27,5 +28,13 @@ public class NodeSimpleResponse {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public NodeAction getRequiredAction() {
+        return requiredAction;
+    }
+
+    public void setRequiredAction(NodeAction requiredAction) {
+        this.requiredAction = requiredAction;
     }
 }

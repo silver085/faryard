@@ -61,4 +61,22 @@ public class NodeService {
         response.setMessage("api.node.pingok");
         return response;
     }
+
+    public NodeSimpleResponse existNode(String macAddress) {
+        Node node = nodeRepository.findByNodeMACAddress(macAddress).orElse(null);
+        boolean exists = node != null;
+
+
+        NodeSimpleResponse response = new NodeSimpleResponse();
+        response.setStatus(NodeResponseStatus.OK);
+        response.setMessage(Boolean.toString(exists));
+        if(exists){
+            response.setNodeId(node.getId());
+            node.setLastPingDate(new Date());
+            node.setNodeStatus(NodeStatus.Online);
+            nodeRepository.save(node);
+
+        }
+        return response;
+    }
 }

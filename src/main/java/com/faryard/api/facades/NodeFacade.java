@@ -33,4 +33,8 @@ public class NodeFacade {
             return errorResponse;
         }
     }
+
+    public NodeSimpleResponse existNode(String macAddress) {
+        return nodeService.existNode(macAddress);
+    }
 }
