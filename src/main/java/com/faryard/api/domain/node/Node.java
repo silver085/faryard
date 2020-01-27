@@ -22,8 +22,7 @@ public class Node {
     private NodeStatus nodeStatus;
     private Date lastActionCommittedDate;
     private Date lastActionConfirmedDate;
-
-    private List<NodeAction> actions = new ArrayList<>();
+    private List<NodeComponent> components;
 
     public String getId() {
         return id;
@@ -97,11 +96,11 @@ public class Node {
         this.lastActionConfirmedDate = lastActionConfirmedDate;
     }
 
-    public List<NodeAction> getActions() {
-        return actions;
+    public List<NodeComponent> getComponents() {
+        return components;
     }
 
-    public void setActions(List<NodeAction> actions) {
-        this.actions = actions;
+    public void setComponents(List<NodeComponent> components) {
+        this.components = components;
     }
 }

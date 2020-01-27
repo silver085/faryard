@@ -8,10 +8,10 @@ public class NodeStatusResponse {
     private Date creationDate;
     private Date lastActionCommittedDate;
     private Date lastActionPerformedDate;
-    private NodeAction lastActionCommitted;
-    private String nodeName;
-    private String nodeMACAddress;
-    private String nodeIP;
+    private String lastActionCommitted;
+    private java.lang.String nodeName;
+    private java.lang.String nodeMACAddress;
+    private java.lang.String nodeIP;
     private Boolean isOnline;
 
     public Boolean getNodeExist() {
@@ -54,35 +54,35 @@ public class NodeStatusResponse {
         this.lastActionPerformedDate = lastActionPerformedDate;
     }
 
-    public NodeAction getLastActionCommitted() {
+    public String getLastActionCommitted() {
         return lastActionCommitted;
     }
 
-    public void setLastActionCommitted(NodeAction lastActionCommitted) {
+    public void setLastActionCommitted(String lastActionCommitted) {
         this.lastActionCommitted = lastActionCommitted;
     }
 
-    public String getNodeName() {
+    public java.lang.String getNodeName() {
         return nodeName;
     }
 
-    public void setNodeName(String nodeName) {
+    public void setNodeName(java.lang.String nodeName) {
         this.nodeName = nodeName;
     }
 
-    public String getNodeMACAddress() {
+    public java.lang.String getNodeMACAddress() {
         return nodeMACAddress;
     }
 
-    public void setNodeMACAddress(String nodeMACAddress) {
+    public void setNodeMACAddress(java.lang.String nodeMACAddress) {
         this.nodeMACAddress = nodeMACAddress;
     }
 
-    public String getNodeIP() {
+    public java.lang.String getNodeIP() {
         return nodeIP;
     }
 
-    public void setNodeIP(String nodeIP) {
+    public void setNodeIP(java.lang.String nodeIP) {
         this.nodeIP = nodeIP;
     }
 
@@ -93,4 +93,6 @@ public class NodeStatusResponse {
     public void setOnline(Boolean online) {
         isOnline = online;
     }
+
+
 }

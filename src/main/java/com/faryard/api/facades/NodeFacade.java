@@ -1,13 +1,11 @@
 package com.faryard.api.facades;
 
-import com.faryard.api.DTO.node.NodeStatusResponse;
-import com.faryard.api.DTO.node.NodeErrorResponse;
-import com.faryard.api.DTO.node.NodePingRequest;
+
+import com.faryard.api.DTO.node.NodeExecuteAction;
+import com.faryard.api.DTO.node.*;
 import com.faryard.api.services.impl.exceptions.NodeAlreadyRegisteredException;
 import com.faryard.api.services.impl.exceptions.NodeNotFoundException;
 import com.faryard.api.services.impl.node.NodeService;
-import com.faryard.api.DTO.node.NodeSimpleResponse;
-import com.faryard.api.DTO.node.RegisterNodeRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -45,5 +43,13 @@ public class NodeFacade {
 
     public NodeStatusResponse nodeStatusById(String nodeId) {
         return nodeService.nodeStatusById(nodeId);
+    }
+
+    public NodeSimpleResponse doAction(NodeExecuteAction nodeAction) {
+        return nodeService.doAction(nodeAction);
+    }
+
+    public NodeSimpleResponse nodeConfiguration(NodeConfigurationRequest nodeConfigurationRequst) {
+        return nodeService.updateNodeConfiguration(nodeConfigurationRequst);
     }
 }

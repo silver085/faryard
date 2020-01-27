@@ -8,9 +8,10 @@ import java.util.Date;
 public class NodeAction {
     @Id
     private String id;
-    private Date actionCommitDate;
+    private String nodeId;
+    private Date actionCommitDate = new Date();
     private Action action;
-    private Boolean confirmed;
+    private Boolean confirmed = false;
     private Date actionConfirmedDate;
 
     public String getId() {
@@ -51,5 +52,13 @@ public class NodeAction {
 
     public void setActionConfirmedDate(Date actionConfirmedDate) {
         this.actionConfirmedDate = actionConfirmedDate;
+    }
+
+    public String getNodeId() {
+        return nodeId;
+    }
+
+    public void setNodeId(String nodeId) {
+        this.nodeId = nodeId;
     }
 }

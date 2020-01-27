@@ -1,13 +1,14 @@
 package com.faryard.api.services.impl.node;
 
-import com.faryard.api.DTO.node.NodeStatusResponse;
-import com.faryard.api.DTO.node.NodePingRequest;
-import com.faryard.api.DTO.node.NodeResponseStatus;
-import com.faryard.api.DTO.node.NodeSimpleResponse;
-import com.faryard.api.DTO.node.RegisterNodeRequest;
+
+import com.faryard.api.DTO.node.NodeExecuteAction;
+import com.faryard.api.DTO.node.*;
 import com.faryard.api.domain.node.Node;
+import com.faryard.api.domain.node.NodeAction;
+import com.faryard.api.domain.node.NodeComponent;
 import com.faryard.api.domain.node.NodeStatus;
 import com.faryard.api.repositories.NodeRepository;
+import com.faryard.api.services.exceptions.ExceptionNodeStillPerformingException;
 import com.faryard.api.services.impl.exceptions.NodeAlreadyRegisteredException;
 import com.faryard.api.services.impl.exceptions.NodeNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,11 +19,16 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class NodeService {
     @Autowired
     NodeRepository nodeRepository;
+
+    @Autowired
+    ActionService actionService;
+
     @Autowired
     MessageSource messageSource;
 
@@ -58,11 +64,16 @@ public class NodeService {
         node.setLastPingDate(new Date());
         node.setNodeStatus(NodeStatus.Online);
         nodeRepository.save(node);
-
         NodeSimpleResponse response = new NodeSimpleResponse();
         response.setNodeId(node.getId());
         response.setStatus(NodeResponseStatus.OK);
         response.setMessage("api.node.pingok");
+        NodeAction lastUnconfirmedAction = actionService.getLastUnconfirmedActionForNode(node);
+        if(lastUnconfirmedAction != null){
+            response.setRequiredAction(lastUnconfirmedAction.getAction().getAction());
+            response.setLastActionId(lastUnconfirmedAction.getId());
+        }
+
         return response;
     }
 
@@ -125,6 +136,58 @@ public class NodeService {
         }else{
             response.setNodeExist(false);
         }
+        return response;
+    }
+
+    public NodeSimpleResponse doAction(NodeExecuteAction nodeAction) {
+        Node node = nodeRepository.findById(nodeAction.getNodeId()).orElse(null);
+        NodeSimpleResponse response = new NodeSimpleResponse();
+
+        if(node!=null && node.getNodeStatus() == NodeStatus.Online){
+            try {
+                actionService.saveActionForNode(node, nodeAction);
+                node.setLastActionCommittedDate(new Date());
+                nodeRepository.save(node);
+                response.setNodeId(node.getId());
+                response.setMessage("action committed");
+                response.setStatus(NodeResponseStatus.OK);
+            } catch (ExceptionNodeStillPerformingException e) {
+                response.setNodeId(node.getId());
+                response.setMessage("node is still performing aciton");
+                response.setRequiredAction(actionService.getLastActionForNode(node));
+                response.setStatus(NodeResponseStatus.ERROR);
+            }
+
+        } else{
+            response.setMessage("node not found or not online");
+            response.setStatus(NodeResponseStatus.ERROR);
+        }
+        return response;
+    }
+
+    public NodeSimpleResponse updateNodeConfiguration(NodeConfigurationRequest nodeConfigurationRequst) {
+        Node node = nodeRepository.findById(nodeConfigurationRequst.getNodeId()).orElse(null);
+        NodeSimpleResponse response = new NodeSimpleResponse();
+        if(node != null){
+            List<NodeComponent> nodeComponents = nodeConfigurationRequst.getComponents().stream()
+                    .map(nodeComponentDTO -> {
+                        NodeComponent nodeComponent = new NodeComponent();
+                        nodeComponent.setComponentName(nodeComponentDTO.getComponentName());
+                        nodeComponent.setComponentReference(nodeComponentDTO.getComponentReference());
+                        nodeComponent.setComponentIO(nodeComponentDTO.getComponentIO());
+                        nodeComponent.setComponentPin(nodeComponentDTO.getComponentPin());
+                        nodeComponent.setComponentHealth(nodeComponentDTO.getComponentHealth());
+                        nodeComponent.setLastComponentUoM(nodeComponentDTO.getLastComponentUoM());
+                        nodeComponent.setLastComponentValue(nodeComponentDTO.getLastComponentValue());
+                        return nodeComponent;
+                    }).collect(Collectors.toList());
+            node.setComponents(nodeComponents);
+            nodeRepository.save(node);
+        } else {
+            response.setStatus(NodeResponseStatus.ERROR);
+            response.setMessage("node not found");
+        }
+
         return response;
     }
 }

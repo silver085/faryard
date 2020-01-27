@@ -1,18 +1,18 @@
 package com.faryard.api.DTO.node;
 
-public enum NodeAction {
+public enum ActionDTO {
     IDLE("IDLE"),
     SENDCONFIGURATION("SENDCONFIGURATION"),
     UPDATESENSORSTATUS("UPDATESENSORSTATUS"),
     EXECUTEACTION("EXECUTEACTION");
 
-    private String nodeAction;
+    private java.lang.String nodeAction;
 
-    NodeAction(String nodeAction) {
+    ActionDTO(java.lang.String nodeAction) {
         this.nodeAction = nodeAction;
     }
 
-    public String getNodeAction() {
+    public java.lang.String getNodeAction() {
         return nodeAction;
     }
 }

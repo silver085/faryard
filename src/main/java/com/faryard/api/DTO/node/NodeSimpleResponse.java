@@ -4,13 +4,14 @@ public class NodeSimpleResponse {
     private String nodeId;
     private NodeResponseStatus status;
     private String message;
-    private NodeAction requiredAction;
+    private String requiredAction;
+    private String lastActionId;
 
-    public String getNodeId() {
+    public java.lang.String getNodeId() {
         return nodeId;
     }
 
-    public void setNodeId(String nodeId) {
+    public void setNodeId(java.lang.String nodeId) {
         this.nodeId = nodeId;
     }
 
@@ -22,19 +23,27 @@ public class NodeSimpleResponse {
         this.status = status;
     }
 
-    public String getMessage() {
+    public java.lang.String getMessage() {
         return message;
     }
 
-    public void setMessage(String message) {
+    public void setMessage(java.lang.String message) {
         this.message = message;
     }
 
-    public NodeAction getRequiredAction() {
+    public String getRequiredAction() {
         return requiredAction;
     }
 
-    public void setRequiredAction(NodeAction requiredAction) {
+    public void setRequiredAction(String requiredAction) {
         this.requiredAction = requiredAction;
+    }
+
+    public String getLastActionId() {
+        return lastActionId;
+    }
+
+    public void setLastActionId(String lastActionId) {
+        this.lastActionId = lastActionId;
     }
 }
