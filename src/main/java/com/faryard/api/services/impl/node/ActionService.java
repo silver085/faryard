@@ -64,4 +64,12 @@ public class ActionService  {
             throw new ExceptionActionNotFound();
         }
     }
+
+    public void saveActionSendConfigurationForNewNode(Node node) {
+        NodeAction action = new NodeAction();
+        action.setAction(Action.SENDCONFIGURATION);
+        action.setNodeId(node.getId());
+        action.setActionCommitDate(new Date());
+        nodeActionRepository.save(action);
+    }
 }

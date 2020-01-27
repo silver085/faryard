@@ -54,6 +54,7 @@ public class NodeService {
         response.setMessage("api.node.registered");
         response.setNodeId(newNode.getId());
 
+        actionService.saveActionSendConfigurationForNewNode(node);
         return response;
     }
 
