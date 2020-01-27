@@ -5,6 +5,8 @@ import com.faryard.api.domain.node.Action;
 import com.faryard.api.domain.node.Node;
 import com.faryard.api.domain.node.NodeAction;
 import com.faryard.api.repositories.NodeActionRepository;
+import com.faryard.api.services.exceptions.ExceptionActionAlreadyConfirmed;
+import com.faryard.api.services.exceptions.ExceptionActionNotFound;
 import com.faryard.api.services.exceptions.ExceptionNodeStillPerformingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -47,5 +49,19 @@ public class ActionService  {
 
     public NodeAction getLastUnconfirmedActionForNode(Node node){
         return nodeActionRepository.findByConfirmedIsFalseAndNodeId(node.getId()).stream().findFirst().orElse(null);
+    }
+
+    public void markAsDone(String lastActionId) throws ExceptionActionNotFound, ExceptionActionAlreadyConfirmed {
+        if(nodeActionRepository.findById(lastActionId).isPresent()) {
+            NodeAction action = nodeActionRepository.findById(lastActionId).get();
+            if(action.getConfirmed()){
+                throw new ExceptionActionAlreadyConfirmed();
+            }
+            action.setActionConfirmedDate(new Date());
+            action.setConfirmed(true);
+            nodeActionRepository.save(action);
+        } else {
+            throw new ExceptionActionNotFound();
+        }
     }
 }

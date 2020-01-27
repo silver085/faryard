@@ -8,6 +8,8 @@ import com.faryard.api.domain.node.NodeAction;
 import com.faryard.api.domain.node.NodeComponent;
 import com.faryard.api.domain.node.NodeStatus;
 import com.faryard.api.repositories.NodeRepository;
+import com.faryard.api.services.exceptions.ExceptionActionAlreadyConfirmed;
+import com.faryard.api.services.exceptions.ExceptionActionNotFound;
 import com.faryard.api.services.exceptions.ExceptionNodeStillPerformingException;
 import com.faryard.api.services.impl.exceptions.NodeAlreadyRegisteredException;
 import com.faryard.api.services.impl.exceptions.NodeNotFoundException;
@@ -183,6 +185,21 @@ public class NodeService {
                     }).collect(Collectors.toList());
             node.setComponents(nodeComponents);
             nodeRepository.save(node);
+            try {
+                actionService.markAsDone(nodeConfigurationRequst.getLastActionId());
+                response.setMessage("configuration saved");
+                response.setNodeId(node.getId());
+                response.setRequiredAction(null);
+                response.setLastActionId(null);
+                response.setStatus(NodeResponseStatus.OK);
+            } catch (ExceptionActionNotFound exceptionActionNotFound) {
+                response.setStatus(NodeResponseStatus.ERROR);
+                response.setMessage("configuration saved, action not found");
+            } catch (ExceptionActionAlreadyConfirmed exceptionActionAlreadyConfirmed) {
+                response.setNodeId(node.getId());
+                response.setStatus(NodeResponseStatus.ERROR);
+                response.setMessage("configuration saved, action was already confirmed");
+            }
         } else {
             response.setStatus(NodeResponseStatus.ERROR);
             response.setMessage("node not found");
