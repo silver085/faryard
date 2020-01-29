@@ -72,4 +72,14 @@ public class ActionService  {
         action.setActionCommitDate(new Date());
         nodeActionRepository.save(action);
     }
+
+    public void forceAllNodesUpdatingConfig(List<String> nodeIds) {
+        nodeActionRepository.deleteAll();
+        nodeIds.forEach(nodeId -> {
+            NodeAction nodeAction = new NodeAction();
+            nodeAction.setNodeId(nodeId);
+            nodeAction.setAction(Action.UPDATESENSORSTATUS);
+            nodeActionRepository.save(nodeAction);
+        });
+    }
 }

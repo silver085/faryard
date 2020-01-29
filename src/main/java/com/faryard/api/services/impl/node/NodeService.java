@@ -208,4 +208,8 @@ public class NodeService {
 
         return response;
     }
+
+    public List<String> getAllNodesIds() {
+        return nodeRepository.findAll().stream().map(Node::getId).collect(Collectors.toList());
+    }
 }
