@@ -47,4 +47,8 @@ public class NodeController extends ApiBaseController {
         return nodeFacade.nodeConfiguration(nodeConfigurationRequst);
     }
 
+    @GetMapping("/configuration")
+    public NodeSensorStatus nodeSensorStatus(@RequestParam String nodeId){
+        return nodeFacade.nodeSensorStatus(nodeId);
+    }
 }

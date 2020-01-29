@@ -52,4 +52,8 @@ public class NodeFacade {
     public NodeSimpleResponse nodeConfiguration(NodeConfigurationRequest nodeConfigurationRequst) {
         return nodeService.updateNodeConfiguration(nodeConfigurationRequst);
     }
+
+    public NodeSensorStatus nodeSensorStatus(String nodeId) {
+        return nodeService.getNodeSensorStatus(nodeId);
+    }
 }

@@ -224,4 +224,37 @@ public class NodeService {
     public List<String> getAllNodesIds() {
         return nodeRepository.findAll().stream().map(Node::getId).collect(Collectors.toList());
     }
+
+    public NodeSensorStatus getNodeSensorStatus(String nodeId) {
+        NodeSensorStatus response = new NodeSensorStatus();
+        Node node = nodeRepository.findById(nodeId).orElse(null);
+        if(node != null){
+            response.setNodeExist(true);
+            response.setLastPingDate(node.getLastPingDate());
+            response.setCreationDate(node.getCreationDate());
+            response.setNodeName(node.getNodeName());
+            response.setNodeMACAddress(node.getNodeMACAddress());
+            response.setNodeIP(node.getNodeIP());
+            response.setOnline(node.getNodeStatus().equals(NodeStatus.Online));
+            List<NodeComponentDTO> nodeComponents = node.getComponents().stream()
+                    .map(component -> {
+                        NodeComponentDTO nodeComponentDTO = new NodeComponentDTO();
+                        nodeComponentDTO.setComponentName(component.getComponentName());
+                        nodeComponentDTO.setComponentReference(component.getComponentReference());
+                        nodeComponentDTO.setComponentIO(component.getComponentIO());
+                        nodeComponentDTO.setComponentPin(component.getComponentPin());
+                        nodeComponentDTO.setComponentHealth(component.getComponentHealth());
+                        nodeComponentDTO.setLastComponentUoM(component.getLastComponentUoM());
+                        nodeComponentDTO.setLastComponentValue(component.getLastComponentValue());
+                        return nodeComponentDTO;
+                    }).collect(Collectors.toList());
+            response.setComponents(nodeComponents);
+            response.setLastSensorUpdate(node.getLastSensorUpdate());
+            // response.setLastActionCommittedDate(node.getLastActionCommittedDate());
+            // response.setLastActionCommitted(node.getLa);
+        } else {
+            response.setNodeExist(false);
+        }
+        return response;
+    }
 }
