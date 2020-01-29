@@ -80,7 +80,7 @@ public class NodeService {
         if(node.getLastSensorUpdate() != null) {
             ZonedDateTime now = LocalDateTime.now().atZone(ZoneId.of("Europe/Rome"));
             ZonedDateTime d = ZonedDateTime.ofInstant(node.getLastSensorUpdate().toInstant(), ZoneId.of("Europe/Rome"));
-            minutes = ChronoUnit.MINUTES.between(now, d);
+            minutes = ChronoUnit.MINUTES.between(d, now);
         } else{
             minutes = 20;
         }

@@ -1,6 +1,7 @@
 package com.faryard.api.services.impl.node;
 
 import com.faryard.api.DTO.node.NodeExecuteAction;
+import com.faryard.api.configurators.StartupApplication;
 import com.faryard.api.domain.node.Action;
 import com.faryard.api.domain.node.Node;
 import com.faryard.api.domain.node.NodeAction;
@@ -8,6 +9,8 @@ import com.faryard.api.repositories.NodeActionRepository;
 import com.faryard.api.services.exceptions.ExceptionActionAlreadyConfirmed;
 import com.faryard.api.services.exceptions.ExceptionActionNotFound;
 import com.faryard.api.services.exceptions.ExceptionNodeStillPerformingException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +19,8 @@ import java.util.List;
 
 @Service
 public class ActionService  {
+    private static final Logger logger = LoggerFactory.getLogger(ActionService.class);
+
     @Autowired
     NodeActionRepository nodeActionRepository;
 
@@ -84,9 +89,15 @@ public class ActionService  {
     }
 
     public void forceNodeUpdateSensors(String id) {
+        List<NodeAction> actions = nodeActionRepository.findByConfirmedIsFalseAndNodeId(id);
+        if(actions.size() > 0){
+            logger.error("Node actually busy while trying to save a new action, nodeId {}", id);
+            return;
+        }
         NodeAction nodeAction = new NodeAction();
         nodeAction.setNodeId(id);
         nodeAction.setAction(Action.UPDATESENSORSTATUS);
         nodeActionRepository.save(nodeAction);
+        logger.info("Requested sensors status to {}", id);
     }
 }
