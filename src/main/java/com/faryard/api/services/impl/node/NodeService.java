@@ -250,8 +250,8 @@ public class NodeService {
                     }).collect(Collectors.toList());
             response.setComponents(nodeComponents);
             response.setLastSensorUpdate(node.getLastSensorUpdate());
-            // response.setLastActionCommittedDate(node.getLastActionCommittedDate());
-            // response.setLastActionCommitted(node.getLa);
+            response.setLastActionCommittedDate(node.getLastActionCommittedDate());
+            response.setLastActionCommitted(actionService.getLastActionForNode(node));
         } else {
             response.setNodeExist(false);
         }
