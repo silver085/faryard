@@ -23,6 +23,7 @@ public class Node {
     private Date lastActionCommittedDate;
     private Date lastActionConfirmedDate;
     private List<NodeComponent> components;
+    private Date lastSensorUpdate;
 
     public String getId() {
         return id;
@@ -102,5 +103,13 @@ public class Node {
 
     public void setComponents(List<NodeComponent> components) {
         this.components = components;
+    }
+
+    public Date getLastSensorUpdate() {
+        return lastSensorUpdate;
+    }
+
+    public void setLastSensorUpdate(Date lastSensorUpdate) {
+        this.lastSensorUpdate = lastSensorUpdate;
     }
 }

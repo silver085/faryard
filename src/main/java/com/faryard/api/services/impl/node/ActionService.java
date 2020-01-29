@@ -82,4 +82,11 @@ public class ActionService  {
             nodeActionRepository.save(nodeAction);
         });
     }
+
+    public void forceNodeUpdateSensors(String id) {
+        NodeAction nodeAction = new NodeAction();
+        nodeAction.setNodeId(id);
+        nodeAction.setAction(Action.UPDATESENSORSTATUS);
+        nodeActionRepository.save(nodeAction);
+    }
 }

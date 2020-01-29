@@ -17,8 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
-import java.time.ZoneId;
+import java.time.*;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -76,7 +76,12 @@ public class NodeService {
             response.setRequiredAction(lastUnconfirmedAction.getAction().getAction());
             response.setLastActionId(lastUnconfirmedAction.getId());
         }
-
+        ZonedDateTime now = LocalDateTime.now().atZone(ZoneId.of("Europe/Rome"));
+        ZonedDateTime d = ZonedDateTime.ofInstant(node.getLastSensorUpdate().toInstant(), ZoneId.of("Europe/Rome"));
+        long minutes = ChronoUnit.MINUTES.between(now, d);
+        if(minutes > 10){
+            actionService.forceNodeUpdateSensors(node.getId());
+        }
         return response;
     }
 
@@ -185,6 +190,7 @@ public class NodeService {
                         return nodeComponent;
                     }).collect(Collectors.toList());
             node.setComponents(nodeComponents);
+            node.setLastSensorUpdate(new Date());
             nodeRepository.save(node);
             try {
                 actionService.markAsDone(nodeConfigurationRequst.getLastActionId());
