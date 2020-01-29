@@ -76,9 +76,15 @@ public class NodeService {
             response.setRequiredAction(lastUnconfirmedAction.getAction().getAction());
             response.setLastActionId(lastUnconfirmedAction.getId());
         }
-        ZonedDateTime now = LocalDateTime.now().atZone(ZoneId.of("Europe/Rome"));
-        ZonedDateTime d = ZonedDateTime.ofInstant(node.getLastSensorUpdate().toInstant(), ZoneId.of("Europe/Rome"));
-        long minutes = ChronoUnit.MINUTES.between(now, d);
+        long minutes = 0;
+        if(node.getLastSensorUpdate() != null) {
+            ZonedDateTime now = LocalDateTime.now().atZone(ZoneId.of("Europe/Rome"));
+            ZonedDateTime d = ZonedDateTime.ofInstant(node.getLastSensorUpdate().toInstant(), ZoneId.of("Europe/Rome"));
+            minutes = ChronoUnit.MINUTES.between(now, d);
+        } else{
+            minutes = 20;
+        }
+
         if(minutes > 10){
             actionService.forceNodeUpdateSensors(node.getId());
         }
