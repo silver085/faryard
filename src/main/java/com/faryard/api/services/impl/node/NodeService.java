@@ -1,11 +1,11 @@
 package com.faryard.api.services.impl.node;
 
 
+import com.faryard.api.DTO.MarkActionDoneRequest;
 import com.faryard.api.DTO.node.NodeExecuteAction;
 import com.faryard.api.DTO.node.*;
 import com.faryard.api.domain.node.Node;
 import com.faryard.api.domain.node.NodeAction;
-import com.faryard.api.domain.node.NodeComponent;
 import com.faryard.api.domain.node.NodeStatus;
 import com.faryard.api.repositories.NodeRepository;
 import com.faryard.api.services.exceptions.ExceptionActionAlreadyConfirmed;
@@ -13,6 +13,7 @@ import com.faryard.api.services.exceptions.ExceptionActionNotFound;
 import com.faryard.api.services.exceptions.ExceptionNodeStillPerformingException;
 import com.faryard.api.services.impl.exceptions.NodeAlreadyRegisteredException;
 import com.faryard.api.services.impl.exceptions.NodeNotFoundException;
+import com.faryard.api.utils.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
@@ -54,7 +55,7 @@ public class NodeService {
         response.setMessage("api.node.registered");
         response.setNodeId(newNode.getId());
 
-        actionService.saveActionSendConfigurationForNewNode(node);
+
         return response;
     }
 
@@ -66,6 +67,8 @@ public class NodeService {
 
         node.setLastPingDate(new Date());
         node.setNodeStatus(NodeStatus.Online);
+        node.setNodeSensors(Mappers.mapSensorsFromDTO(request.getSensorsStatus()));
+        node.setLastSensorUpdate(new Date());
         nodeRepository.save(node);
         NodeSimpleResponse response = new NodeSimpleResponse();
         response.setNodeId(node.getId());
@@ -74,20 +77,10 @@ public class NodeService {
         NodeAction lastUnconfirmedAction = actionService.getLastUnconfirmedActionForNode(node);
         if(lastUnconfirmedAction != null){
             response.setRequiredAction(lastUnconfirmedAction.getAction().getAction());
+            response.setRequiredCommand(lastUnconfirmedAction.getCommand());
             response.setLastActionId(lastUnconfirmedAction.getId());
         }
-        long minutes = 0;
-        if(node.getLastSensorUpdate() != null) {
-            ZonedDateTime now = LocalDateTime.now().atZone(ZoneId.of("Europe/Rome"));
-            ZonedDateTime d = ZonedDateTime.ofInstant(node.getLastSensorUpdate().toInstant(), ZoneId.of("Europe/Rome"));
-            minutes = ChronoUnit.MINUTES.between(d, now);
-        } else{
-            minutes = 20;
-        }
 
-        if(minutes > 10){
-            actionService.forceNodeUpdateSensors(node.getId());
-        }
         return response;
     }
 
@@ -179,82 +172,66 @@ public class NodeService {
         return response;
     }
 
-    public NodeSimpleResponse updateNodeConfiguration(NodeConfigurationRequest nodeConfigurationRequst) {
-        Node node = nodeRepository.findById(nodeConfigurationRequst.getNodeId()).orElse(null);
-        NodeSimpleResponse response = new NodeSimpleResponse();
-        if(node != null){
-            List<NodeComponent> nodeComponents = nodeConfigurationRequst.getComponents().stream()
-                    .map(nodeComponentDTO -> {
-                        NodeComponent nodeComponent = new NodeComponent();
-                        nodeComponent.setComponentName(nodeComponentDTO.getComponentName());
-                        nodeComponent.setComponentReference(nodeComponentDTO.getComponentReference());
-                        nodeComponent.setComponentIO(nodeComponentDTO.getComponentIO());
-                        nodeComponent.setComponentPin(nodeComponentDTO.getComponentPin());
-                        nodeComponent.setComponentHealth(nodeComponentDTO.getComponentHealth());
-                        nodeComponent.setLastComponentUoM(nodeComponentDTO.getLastComponentUoM());
-                        nodeComponent.setLastComponentValue(nodeComponentDTO.getLastComponentValue());
-                        return nodeComponent;
-                    }).collect(Collectors.toList());
-            node.setComponents(nodeComponents);
-            node.setLastSensorUpdate(new Date());
-            nodeRepository.save(node);
-            try {
-                actionService.markAsDone(nodeConfigurationRequst.getLastActionId());
-                response.setMessage("configuration saved");
-                response.setNodeId(node.getId());
-                response.setRequiredAction(null);
-                response.setLastActionId(null);
-                response.setStatus(NodeResponseStatus.OK);
-            } catch (ExceptionActionNotFound exceptionActionNotFound) {
-                response.setStatus(NodeResponseStatus.ERROR);
-                response.setMessage("configuration saved, action not found");
-            } catch (ExceptionActionAlreadyConfirmed exceptionActionAlreadyConfirmed) {
-                response.setNodeId(node.getId());
-                response.setStatus(NodeResponseStatus.ERROR);
-                response.setMessage("configuration saved, action was already confirmed");
-            }
-        } else {
-            response.setStatus(NodeResponseStatus.ERROR);
-            response.setMessage("node not found");
-        }
-
-        return response;
-    }
 
     public List<String> getAllNodesIds() {
         return nodeRepository.findAll().stream().map(Node::getId).collect(Collectors.toList());
     }
 
-    public NodeSensorStatus getNodeSensorStatus(String nodeId) {
-        NodeSensorStatus response = new NodeSensorStatus();
+
+    public NodeSensorStatusResponse nodeSensorsStatus(String nodeId) {
         Node node = nodeRepository.findById(nodeId).orElse(null);
+        NodeSensorStatusResponse response = new NodeSensorStatusResponse();
         if(node != null){
-            response.setNodeExist(true);
-            response.setLastPingDate(node.getLastPingDate());
-            response.setCreationDate(node.getCreationDate());
-            response.setNodeName(node.getNodeName());
-            response.setNodeMACAddress(node.getNodeMACAddress());
-            response.setNodeIP(node.getNodeIP());
-            response.setOnline(node.getNodeStatus().equals(NodeStatus.Online));
-            List<NodeComponentDTO> nodeComponents = node.getComponents().stream()
-                    .map(component -> {
-                        NodeComponentDTO nodeComponentDTO = new NodeComponentDTO();
-                        nodeComponentDTO.setComponentName(component.getComponentName());
-                        nodeComponentDTO.setComponentReference(component.getComponentReference());
-                        nodeComponentDTO.setComponentIO(component.getComponentIO());
-                        nodeComponentDTO.setComponentPin(component.getComponentPin());
-                        nodeComponentDTO.setComponentHealth(component.getComponentHealth());
-                        nodeComponentDTO.setLastComponentUoM(component.getLastComponentUoM());
-                        nodeComponentDTO.setLastComponentValue(component.getLastComponentValue());
-                        return nodeComponentDTO;
-                    }).collect(Collectors.toList());
-            response.setComponents(nodeComponents);
-            response.setLastSensorUpdate(node.getLastSensorUpdate());
-            response.setLastActionCommittedDate(node.getLastActionCommittedDate());
-            response.setLastActionCommitted(actionService.getLastActionForNode(node));
-        } else {
-            response.setNodeExist(false);
+            NodeAction nodeAction = actionService.getLastUnconfirmedActionForNode(node);
+             response.setNodeId(node.getId());
+            if(nodeAction != null){
+                response.setRequiredAction(nodeAction.getAction().getAction());
+                response.setRequiredCommand(nodeAction.getCommand());
+                response.setLastActionId(nodeAction.getId());
+            }
+            response.setSensorsStatus(Mappers.mapNodeToNodeStatusResponse(node));
+            response.setStatus(NodeResponseStatus.OK);
+            response.setMessage("");
+        } else{
+            response.setStatus(NodeResponseStatus.ERROR);
+            response.setMessage("node not found or not online");
         }
+
+
         return response;
+    }
+
+    public NodeSimpleResponse markActionDone(MarkActionDoneRequest actionDoneRequest) {
+        Node node = nodeRepository.findById(actionDoneRequest.getNodeId()).orElse(null);
+        NodeSimpleResponse response = new NodeSimpleResponse();
+        if(node== null){
+            response.setStatus(NodeResponseStatus.ERROR);
+            response.setMessage("Node not found or not online");
+            return response;
+        }
+        NodeAction action = actionService.getLastUnconfirmedActionForNode(node);
+        if(action == null){
+            response.setStatus(NodeResponseStatus.ERROR);
+            response.setMessage("No action were pending for this node");
+            return response;
+        }
+        if(!action.getId().equals(actionDoneRequest.getActionId())){
+            response.setStatus(NodeResponseStatus.ERROR);
+            response.setMessage("Action not matching expecting id");
+            return response;
+        } else{
+            try {
+                actionService.markAsDone(actionDoneRequest.getActionId());
+                response.setStatus(NodeResponseStatus.OK);
+                response.setNodeId(node.getId());
+                return response;
+
+            } catch (ExceptionActionNotFound | ExceptionActionAlreadyConfirmed exceptionActionNotFound) {
+                response.setMessage(exceptionActionNotFound.getMessage());
+                response.setStatus(NodeResponseStatus.ERROR);
+                return response;
+            }
+        }
+
     }
 }

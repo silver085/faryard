@@ -4,6 +4,15 @@ public class NodePingRequest {
     private String id;
     private String ip;
     private String macAddress;
+    private SensorsStatus sensorsStatus;
+
+    public SensorsStatus getSensorsStatus() {
+        return sensorsStatus;
+    }
+
+    public void setSensorsStatus(SensorsStatus sensorsStatus) {
+        this.sensorsStatus = sensorsStatus;
+    }
 
     public String getId() {
         return id;

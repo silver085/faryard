@@ -24,8 +24,7 @@ public class StartupApplication implements ApplicationListener<ContextRefreshedE
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
         logger.info("Application event: {}", event);
-        List<String> nodeIds = nodeService.getAllNodesIds();
-        actionService.forceAllNodesUpdatingConfig(nodeIds);
+
 
     }
 }

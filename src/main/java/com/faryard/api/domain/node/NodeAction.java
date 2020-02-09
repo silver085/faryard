@@ -13,6 +13,7 @@ public class NodeAction {
     private Action action;
     private Boolean confirmed = false;
     private Date actionConfirmedDate;
+    private String command;
 
     public String getId() {
         return id;
@@ -60,5 +61,13 @@ public class NodeAction {
 
     public void setNodeId(String nodeId) {
         this.nodeId = nodeId;
+    }
+
+    public String getCommand() {
+        return command;
+    }
+
+    public void setCommand(String command) {
+        this.command = command;
     }
 }

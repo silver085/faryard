@@ -1,6 +1,7 @@
 package com.faryard.api.facades;
 
 
+import com.faryard.api.DTO.MarkActionDoneRequest;
 import com.faryard.api.DTO.node.NodeExecuteAction;
 import com.faryard.api.DTO.node.*;
 import com.faryard.api.services.impl.exceptions.NodeAlreadyRegisteredException;
@@ -49,11 +50,12 @@ public class NodeFacade {
         return nodeService.doAction(nodeAction);
     }
 
-    public NodeSimpleResponse nodeConfiguration(NodeConfigurationRequest nodeConfigurationRequst) {
-        return nodeService.updateNodeConfiguration(nodeConfigurationRequst);
+
+    public NodeSensorStatusResponse nodeSensorsStatus(String nodeId) {
+        return nodeService.nodeSensorsStatus(nodeId);
     }
 
-    public NodeSensorStatus nodeSensorStatus(String nodeId) {
-        return nodeService.getNodeSensorStatus(nodeId);
+    public NodeSimpleResponse markActionAsDone(MarkActionDoneRequest actionDoneRequest) {
+        return nodeService.markActionDone(actionDoneRequest);
     }
 }

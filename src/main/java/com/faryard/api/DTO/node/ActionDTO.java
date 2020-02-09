@@ -2,8 +2,6 @@ package com.faryard.api.DTO.node;
 
 public enum ActionDTO {
     IDLE("IDLE"),
-    SENDCONFIGURATION("SENDCONFIGURATION"),
-    UPDATESENSORSTATUS("UPDATESENSORSTATUS"),
     EXECUTEACTION("EXECUTEACTION");
 
     private java.lang.String nodeAction;

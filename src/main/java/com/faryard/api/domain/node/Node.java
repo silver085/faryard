@@ -5,9 +5,7 @@ import org.springframework.data.mongodb.core.index.IndexDirection;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 @Document("Node")
 public class Node {
@@ -22,8 +20,8 @@ public class Node {
     private NodeStatus nodeStatus;
     private Date lastActionCommittedDate;
     private Date lastActionConfirmedDate;
-    private List<NodeComponent> components;
     private Date lastSensorUpdate;
+    private NodeSensors nodeSensors;
 
     public String getId() {
         return id;
@@ -97,19 +95,19 @@ public class Node {
         this.lastActionConfirmedDate = lastActionConfirmedDate;
     }
 
-    public List<NodeComponent> getComponents() {
-        return components;
-    }
-
-    public void setComponents(List<NodeComponent> components) {
-        this.components = components;
-    }
-
     public Date getLastSensorUpdate() {
         return lastSensorUpdate;
     }
 
     public void setLastSensorUpdate(Date lastSensorUpdate) {
         this.lastSensorUpdate = lastSensorUpdate;
+    }
+
+    public NodeSensors getNodeSensors() {
+        return nodeSensors;
+    }
+
+    public void setNodeSensors(NodeSensors nodeSensors) {
+        this.nodeSensors = nodeSensors;
     }
 }

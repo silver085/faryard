@@ -5,6 +5,7 @@ public class NodeSimpleResponse {
     private NodeResponseStatus status;
     private String message;
     private String requiredAction;
+    private String requiredCommand;
     private String lastActionId;
 
     public java.lang.String getNodeId() {
@@ -45,5 +46,13 @@ public class NodeSimpleResponse {
 
     public void setLastActionId(String lastActionId) {
         this.lastActionId = lastActionId;
+    }
+
+    public String getRequiredCommand() {
+        return requiredCommand;
+    }
+
+    public void setRequiredCommand(String requredCommand) {
+        this.requiredCommand = requredCommand;
     }
 }

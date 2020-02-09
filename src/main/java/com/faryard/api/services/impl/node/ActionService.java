@@ -31,6 +31,7 @@ public class ActionService  {
         NodeAction newAction = new NodeAction();
         newAction.setNodeId(node.getId());
         newAction.setActionCommitDate(new Date());
+        newAction.setCommand(nodeAction.getNodeCommand());
         newAction.setAction(Action.valueOf(nodeAction.getAction()));
         nodeActionRepository.save(newAction);
     }
@@ -68,36 +69,5 @@ public class ActionService  {
         } else {
             throw new ExceptionActionNotFound();
         }
-    }
-
-    public void saveActionSendConfigurationForNewNode(Node node) {
-        NodeAction action = new NodeAction();
-        action.setAction(Action.SENDCONFIGURATION);
-        action.setNodeId(node.getId());
-        action.setActionCommitDate(new Date());
-        nodeActionRepository.save(action);
-    }
-
-    public void forceAllNodesUpdatingConfig(List<String> nodeIds) {
-        nodeActionRepository.deleteAll();
-        nodeIds.forEach(nodeId -> {
-            NodeAction nodeAction = new NodeAction();
-            nodeAction.setNodeId(nodeId);
-            nodeAction.setAction(Action.UPDATESENSORSTATUS);
-            nodeActionRepository.save(nodeAction);
-        });
-    }
-
-    public void forceNodeUpdateSensors(String id) {
-        List<NodeAction> actions = nodeActionRepository.findByConfirmedIsFalseAndNodeId(id);
-        if(actions.size() > 0){
-            logger.error("Node actually busy while trying to save a new action, nodeId {}", id);
-            return;
-        }
-        NodeAction nodeAction = new NodeAction();
-        nodeAction.setNodeId(id);
-        nodeAction.setAction(Action.UPDATESENSORSTATUS);
-        nodeActionRepository.save(nodeAction);
-        logger.info("Requested sensors status to {}", id);
     }
 }

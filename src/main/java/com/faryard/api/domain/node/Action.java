@@ -2,8 +2,7 @@ package com.faryard.api.domain.node;
 
 public enum Action {
     IDLE("IDLE"),
-    SENDCONFIGURATION("SENDCONFIGURATION"),
-    UPDATESENSORSTATUS("UPDATESENSORSTATUS"),
+    RELAY("RELAY"),
     EXECUTEACTION("EXECUTEACTION");
 
     private String action;
@@ -15,4 +14,6 @@ public enum Action {
     public String getAction() {
         return action;
     }
+
+
 }

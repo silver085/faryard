@@ -1,6 +1,7 @@
 package com.faryard.api.controllers;
 
 
+import com.faryard.api.DTO.MarkActionDoneRequest;
 import com.faryard.api.DTO.node.NodeExecuteAction;
 import com.faryard.api.DTO.node.*;
 import com.faryard.api.facades.NodeFacade;
@@ -38,17 +39,19 @@ public class NodeController extends ApiBaseController {
         return nodeFacade.nodeStatusById(nodeId);
     }
 
+    @GetMapping("/sensors")
+    public NodeSensorStatusResponse nodeSensorStatus(@RequestParam String nodeId){
+        return nodeFacade.nodeSensorsStatus(nodeId);
+    }
+
+
     @PostMapping("/doaction")
     public NodeSimpleResponse doAction(@RequestBody NodeExecuteAction nodeAction ){
         return nodeFacade.doAction(nodeAction);
     }
-    @PostMapping("/configuration")
-    public NodeSimpleResponse nodeConfiguration(@RequestBody NodeConfigurationRequest nodeConfigurationRequst){
-        return nodeFacade.nodeConfiguration(nodeConfigurationRequst);
-    }
 
-    @GetMapping("/configuration")
-    public NodeSensorStatus nodeSensorStatus(@RequestParam String nodeId){
-        return nodeFacade.nodeSensorStatus(nodeId);
+    @PostMapping("/actiondone")
+    public NodeSimpleResponse markActionDone(@RequestBody MarkActionDoneRequest actionDoneRequest){
+        return nodeFacade.markActionAsDone(actionDoneRequest);
     }
 }
