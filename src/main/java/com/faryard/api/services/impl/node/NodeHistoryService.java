@@ -33,7 +33,7 @@ public class NodeHistoryService {
         String strMinMinutesBetweenHistories = (String) env.getProperty("node.history.minutesbetween");
         logger.info("App properties value for minutesbetween: {}" , strMinMinutesBetweenHistories);
         int minMinutesBetweenHistories = Integer.parseInt(strMinMinutesBetweenHistories);
-        Optional<NodeHistory> lastHistory = historyRepository.findTopByNodeId(nodeId);
+        Optional<NodeHistory> lastHistory = historyRepository.findFirstByNodeIdOrderByRegistrationDateDesc(nodeId);
         if(lastHistory.isPresent()){
             logger.info("The node {} has the last history date: {}",nodeId, lastHistory.get().getRegistrationDate());
             Date lastDate = lastHistory.get().getRegistrationDate();
