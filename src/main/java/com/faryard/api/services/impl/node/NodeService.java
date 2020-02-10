@@ -35,6 +35,9 @@ public class NodeService {
     @Autowired
     MessageSource messageSource;
 
+    @Autowired
+    NodeHistoryService nodeHistoryService;
+
     public NodeSimpleResponse registerNode(RegisterNodeRequest request) throws NodeAlreadyRegisteredException{
         Node node = nodeRepository.findByNodeMACAddress(request.getNodeMacAddress()).orElse(null);
         if(node != null){
@@ -80,6 +83,8 @@ public class NodeService {
             response.setRequiredCommand(lastUnconfirmedAction.getCommand());
             response.setLastActionId(lastUnconfirmedAction.getId());
         }
+
+        nodeHistoryService.registerSensorHistory(node.getId(), node.getNodeSensors());
 
         return response;
     }
