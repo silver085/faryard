@@ -1,5 +1,6 @@
 package com.faryard.api.controllers;
 
+import com.faryard.api.DTO.UserNodeDTO;
 import com.faryard.api.DTO.UserProfileDTO;
 import com.faryard.api.facades.UserFacade;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.Locale;
 
 @RestController
@@ -33,8 +35,12 @@ public class ApiBaseController {
 
     @GetMapping("/userprofile")
     public UserProfileDTO getUserProfile(){
-
         return userFacade.getLoggedUserProfile();
+    }
+
+    @GetMapping("/mynodes")
+    public List<UserNodeDTO> getUserNodes(){
+        return userFacade.getMyNodes();
     }
 
 }

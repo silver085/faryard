@@ -29,8 +29,13 @@ function getSecure(url, data, callback, errorCallback){
     xhr.onloadend = function () {
         // done
         try{
-            var parsed = JSON.parse(xhr.response)
-            callback(parsed)
+            if(xhr.status !== 200){
+                errorCallback()
+                invalidateSession()
+            } else {
+                var parsed = JSON.parse(xhr.response)
+                callback(parsed)
+            }
         }catch(err){
             console.info("Err parsing: ", err)
             callback(xhr.response)
@@ -64,8 +69,14 @@ function postSecure(url, data, callback, errorCallback){
     xhr.onloadend = function () {
         // done
         try{
-            var parsed = JSON.parse(xhr.response)
-            callback(parsed)
+            if(xhr.status !== 200){
+                errorCallback()
+                isValidSession()
+            } else {
+                var parsed = JSON.parse(xhr.response)
+                callback(parsed)
+            }
+
         }catch(err){
             console.info("Err parsing: ", err)
             callback(xhr.response)
@@ -95,6 +106,9 @@ function postRequest(url, data, callback, errorCallback) {
     }
 
     xhr.send(data);
+}
+function invalidateSession(){
+    localStorage.removeItem("auth")
 }
 
 function saveCredentials(email, token,remember){
@@ -139,6 +153,16 @@ function getUserProfile(){
             resolve(data)
         }, function(){
             reject("unable to get profile")
+        })
+    }))
+}
+
+function getMyNodes(){
+    return new Promise(((resolve, reject) => {
+        getSecure("/api/v1/mynodes",null, function(data){
+            resolve(data)
+        }, function(){
+            console.log("Error updating nodes!")
         })
     }))
 }

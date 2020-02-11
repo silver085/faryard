@@ -116,15 +116,20 @@ public class MongoUserService implements UserDetailsService {
         profile.setUserId(loggedUser.getId());
         profile.setUsername(loggedUser.getEmail());
         profile.setUserPicture("/static/img/admin.png");
-        List<Node> myNodes ;
-        if(isAdmin(loggedUser)){
-             myNodes = nodeService.getAllNodes();
+        List<UserNodeDTO> myNodes = getMyNodes();
+        profile.setMyNodes(myNodes);
+        return profile;
+    }
 
+    public List<UserNodeDTO> getMyNodes() {
+        List<Node> myNodes ;
+        User loggedUser = getSessionUser();
+        if(isAdmin(loggedUser)){
+            myNodes = nodeService.getAllNodes();
         } else {
             //in caso di nodi associati
             myNodes = nodeService.getMyNodes(loggedUser.getId());
         }
-        profile.setMyNodes(Mappers.domainNodeToUserNodeDTO(myNodes));
-        return profile;
+        return Mappers.domainNodeToUserNodeDTO(myNodes);
     }
 }
