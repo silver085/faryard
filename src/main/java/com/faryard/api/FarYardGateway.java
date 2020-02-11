@@ -58,6 +58,7 @@ public class FarYardGateway {
                 userRoles.add(adminRole);
                 userRoles.add(userRole);
                 newAdmin.setRoles(userRoles);
+
                 usersRepository.save(newAdmin);
             }
         };

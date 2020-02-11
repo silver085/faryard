@@ -1,22 +1,32 @@
 package com.faryard.api.services.impl;
 
 
+import com.faryard.api.DTO.UserNodeDTO;
+import com.faryard.api.DTO.UserProfileDTO;
 import com.faryard.api.DTO.UserRegistration;
 import com.faryard.api.domain.Role;
 import com.faryard.api.domain.Roles;
 import com.faryard.api.domain.User;
+import com.faryard.api.domain.node.Node;
+import com.faryard.api.domain.node.NodeStatus;
 import com.faryard.api.services.impl.exceptions.UserAlreadyExistingException;
 import com.faryard.api.repositories.RoleRepository;
 import com.faryard.api.repositories.UsersRepository;
+import com.faryard.api.services.impl.node.NodeService;
+import com.faryard.api.utils.Mappers;
+import org.apache.catalina.mapper.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -27,6 +37,9 @@ public class MongoUserService implements UserDetailsService {
     private RoleRepository roleRepository;
     @Autowired
     private PasswordEncrypterService passwordEncrypterService;
+    @Autowired
+    private NodeService nodeService;
+
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -70,5 +83,48 @@ public class MongoUserService implements UserDetailsService {
             throw new UserAlreadyExistingException();
 
 
+    }
+    private User getSessionUser(){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return springUserToAppUser((org.springframework.security.core.userdetails.User) auth.getPrincipal());
+    }
+
+    private User springUserToAppUser(org.springframework.security.core.userdetails.User user){
+        String email = user.getUsername();
+        return usersRepository.findByEmail(email).orElse(null);
+
+    }
+    private boolean isAdmin(User user){
+        for(Role role : user.getRoles()){
+            if(role.getRole().equals(Roles.ADMIN.getRole()))
+                return true;
+        }
+        return false;
+    }
+
+    public UserProfileDTO getLoggedUser() {
+        User loggedUser = getSessionUser();
+        UserProfileDTO profile = new UserProfileDTO();
+        profile.setEmail(loggedUser.getEmail());
+        profile.setRoles(
+                loggedUser
+                        .getRoles()
+                        .stream()
+                        .map(Role::getRole)
+                        .collect(Collectors.toList())
+        );
+        profile.setUserId(loggedUser.getId());
+        profile.setUsername(loggedUser.getEmail());
+        profile.setUserPicture("/static/img/admin.png");
+        List<Node> myNodes ;
+        if(isAdmin(loggedUser)){
+             myNodes = nodeService.getAllNodes();
+
+        } else {
+            //in caso di nodi associati
+            myNodes = nodeService.getMyNodes(loggedUser.getId());
+        }
+        profile.setMyNodes(Mappers.domainNodeToUserNodeDTO(myNodes));
+        return profile;
     }
 }

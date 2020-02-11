@@ -1,5 +1,6 @@
 package com.faryard.api.utils;
 
+import com.faryard.api.DTO.UserNodeDTO;
 import com.faryard.api.DTO.node.*;
 import com.faryard.api.domain.node.*;
 
@@ -7,6 +8,19 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class Mappers {
+    public static List<UserNodeDTO> domainNodeToUserNodeDTO(List<Node> nodes){
+                return nodes.stream().map(node -> {
+                    UserNodeDTO userNode = new UserNodeDTO();
+                    userNode.setNodeId(node.getId());
+                    userNode.setNodeIp(node.getNodeIP());
+                    userNode.setMacAddress(node.getNodeMACAddress());
+                    userNode.setCreationDate(node.getCreationDate());
+                    userNode.setLastPingDate(node.getLastPingDate());
+                    userNode.setOnline(node.getNodeStatus().equals(NodeStatus.Online));
+                    return userNode;
+                }).collect(Collectors.toList());
+    }
+
     public static NodeSensors mapSensorsFromDTO(SensorsStatus sensorsStatus) {
         NodeSensors sensors = new NodeSensors();
 

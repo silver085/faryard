@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.*;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -182,6 +183,10 @@ public class NodeService {
         return nodeRepository.findAll().stream().map(Node::getId).collect(Collectors.toList());
     }
 
+    public List<Node> getAllNodes(){
+        return nodeRepository.findAll();
+    }
+
 
     public NodeSensorStatusResponse nodeSensorsStatus(String nodeId) {
         Node node = nodeRepository.findById(nodeId).orElse(null);
@@ -238,5 +243,9 @@ public class NodeService {
             }
         }
 
+    }
+
+    public List<Node> getMyNodes(String userId) {
+        return new ArrayList<>();
     }
 }

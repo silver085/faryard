@@ -30,11 +30,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     MongoUserService mongoUserService;
     @Autowired
     MessageSource msgSource;
+    @Autowired
+    UserAndPassAuthenticationProvider userAndPassAuthenticationProvider;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 
         auth.userDetailsService(mongoUserService).passwordEncoder(bCryptPasswordEncoder());
+        auth.authenticationProvider(userAndPassAuthenticationProvider);
     }
 
     @Override
@@ -43,17 +46,28 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         String msg = msgSource.getMessage("auth.invalidToken", null, Locale.forLanguageTag(LocaleContextHolder.getLocale().getLanguage()));
         http.httpBasic().disable().csrf().disable().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().authorizeRequests()
+                .antMatchers("/admin/login").permitAll()
+                .antMatchers("/admin/panel").permitAll()
+                .antMatchers("/static/**").permitAll()
                 .antMatchers("/api/auth/login").permitAll()
                 .antMatchers("/api/auth/register").permitAll()
                 .antMatchers("/nodeapi/**").permitAll()
                 .antMatchers("/api/v1/test").permitAll()
                 .antMatchers("/api/v1/**").hasAuthority(Roles.USER.getRole())
                 .antMatchers("/api/v1/**").hasAuthority(Roles.ADMIN.getRole())
-                .anyRequest().authenticated().and().csrf()
-                .disable().exceptionHandling().authenticationEntryPoint(new AuthExceptionEntryPoint(msg)).and()
-                .apply(new JwtConfigurer(jwtTokenProvider))
-
-        ;
+                .anyRequest().authenticated()
+                .and()
+                .formLogin()
+                .loginPage("/admin/login")
+                .permitAll()
+                .and()
+                .logout()
+                .permitAll()
+                .and()
+                .csrf()
+                .disable().exceptionHandling()
+                .authenticationEntryPoint(new AuthExceptionEntryPoint(msg)).and()
+                .apply(new JwtConfigurer(jwtTokenProvider));
 
     }
 

@@ -3,6 +3,7 @@ package com.faryard.api.controllers;
 import com.faryard.api.DTO.AuthBody;
 import com.faryard.api.DTO.AuthenticationResponse;
 import com.faryard.api.DTO.UserRegistration;
+import com.faryard.api.configurators.UserAndPassAuthenticationProvider;
 import com.faryard.api.repositories.UsersRepository;
 import com.faryard.api.services.impl.JwtTokenProvider;
 import com.faryard.api.services.impl.MongoUserService;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Locale;
+import java.util.NoSuchElementException;
 
 import static org.springframework.http.ResponseEntity.ok;
 
@@ -28,7 +30,7 @@ import static org.springframework.http.ResponseEntity.ok;
 @RequestMapping("/api/auth")
 public class AuthController {
     @Autowired
-    AuthenticationManager authenticationManager;
+    UserAndPassAuthenticationProvider authenticationManager;
 
     @Autowired
     JwtTokenProvider jwtTokenProvider;
@@ -45,7 +47,8 @@ public class AuthController {
         try{
             String username = data.getEmail();
             String password = data.getPassword();
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+            UsernamePasswordAuthenticationToken upToken = new UsernamePasswordAuthenticationToken(username, password);
+            authenticationManager.authenticate(upToken);
 
             String token = jwtTokenProvider.createToken(username,  usersRepository.findByEmail(username).get().getRoles());
             AuthenticationResponse response = new AuthenticationResponse();
@@ -55,7 +58,7 @@ public class AuthController {
             response.setWelcomeMsg(messageSource.getMessage("auth.welcomeMsg" , null,Locale.forLanguageTag(LocaleContextHolder.getLocale().getLanguage())));
             return ok(response);
 
-        }catch (AuthenticationException e){
+        }catch (NoSuchElementException |AuthenticationException e){
             throw new BadCredentialsException(messageSource.getMessage("invalid.auth", null, Locale.forLanguageTag(LocaleContextHolder.getLocale().getLanguage())));
         }
     }
