@@ -85,6 +85,9 @@ function addNodeOverviewItem(node){
 function displayNodeOverview(selectedNodeId){
     $("#modal").modal("show")
     console.log("Node overview ", selectedNodeId)
+    var node = _.find(window.nodes, n =>{
+        return n.nodeId === selectedNodeId
+    })
     $("#mainoverview").fadeOut("quick", function () {
             $("#backbutton").show()
             $("#mainoverview").hide()
