@@ -29,7 +29,7 @@ function getSecure(url, data, callback, errorCallback){
     xhr.onloadend = function () {
         // done
         try{
-            if(xhr.status !== 200){
+            if(xhr.status !== 200 && xhr.status !== 500){
                 errorCallback()
                 invalidateSession()
             } else {
@@ -69,7 +69,7 @@ function postSecure(url, data, callback, errorCallback){
     xhr.onloadend = function () {
         // done
         try{
-            if(xhr.status !== 200){
+            if(xhr.status !== 200 && xhr.status !== 500){
                 errorCallback()
                 isValidSession()
             } else {
