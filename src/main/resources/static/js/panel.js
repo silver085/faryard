@@ -91,6 +91,17 @@ function displayNodeOverview(nodeid){
             $("#nodedetails").fadeIn("quick", function(){
             $("#pagetitle_header").html("Node control page")
             $("#page_head").html("Node details")
+                getSensors(node.nodeId)
+                    .then((result) => {
+                        var temperature = result.sensorsStatus.hygrometer.temperature + "°"
+                        var humidity =  result.sensorsStatus.hygrometer.humidity + "%"
+                        $("#temp_box").html(temperature)
+                        $("#humidity_box").html(humidity)
+                        hideModal()
+                    })
+                    .catch(()=>{
+                        hideModal()
+                    })
         })
     })
     var node = _.find(window.nodes, n =>{
@@ -113,14 +124,7 @@ function displayNodeOverview(nodeid){
 
     $("#modal").modal('show')
 
-    getSensors(node.nodeId)
-        .then((result) => {
-            debugger;
-            hideModal()
-        })
-        .catch(()=>{
-            hideModal()
-        })
+
 }
 function updateNode(node){
 
