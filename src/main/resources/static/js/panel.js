@@ -105,9 +105,7 @@ function displayNodeOverview(selectedNodeId){
                     })
         })
     })
-    var node = _.find(window.nodes, n =>{
-        return n.nodeId === nodeid
-    })
+
     $("#node_header").html("Details of " + node.macAddress)
     $("#nodeMacAddr").html(node.macAddress)
     $("#nodeIp").html(node.nodeIp)
