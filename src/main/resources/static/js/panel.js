@@ -82,9 +82,9 @@ function addNodeOverviewItem(node){
 
 
 
-function displayNodeOverview(nodeid){
+function displayNodeOverview(selectedNodeId){
     $("#modal").modal("show")
-    console.log("Node overview ", nodeid)
+    console.log("Node overview ", selectedNodeId)
     $("#mainoverview").fadeOut("quick", function () {
             $("#backbutton").show()
             $("#mainoverview").hide()
@@ -92,7 +92,7 @@ function displayNodeOverview(nodeid){
             $("#nodedetails").fadeIn("quick", function(){
             $("#pagetitle_header").html("Node control page")
             $("#page_head").html("Node details")
-                getSensors(nodeId)
+                getSensors(selectedNodeId)
                     .then((result) => {
                         var temperature = result.sensorsStatus.hygrometer.temperature + "°"
                         var humidity =  result.sensorsStatus.hygrometer.humidity + "%"
