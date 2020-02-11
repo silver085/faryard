@@ -166,3 +166,14 @@ function getMyNodes(){
         })
     }))
 }
+
+function getSensors(nodeid){
+    return new Promise(((resolve, reject) => {
+        getSecure("/api/v1/nodesensors",{nodeId:nodeid}, function(data){
+            resolve(data)
+        }, function(){
+            reject()
+            console.log("Error updating nodes!")
+        })
+    }))
+}

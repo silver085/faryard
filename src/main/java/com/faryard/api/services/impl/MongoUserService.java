@@ -132,4 +132,11 @@ public class MongoUserService implements UserDetailsService {
         }
         return Mappers.domainNodeToUserNodeDTO(myNodes);
     }
+
+    public boolean isUserAllowedForNodeId(String nodeId) {
+        User loggedUser = getSessionUser();
+        if(isAdmin(loggedUser)) return true;
+        List<Node> myNodes = nodeService.getMyNodes(loggedUser.getId());
+        return myNodes.stream().anyMatch(n -> n.getId().equals(nodeId));
+    }
 }

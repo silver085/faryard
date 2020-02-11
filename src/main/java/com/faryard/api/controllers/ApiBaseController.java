@@ -2,12 +2,18 @@ package com.faryard.api.controllers;
 
 import com.faryard.api.DTO.UserNodeDTO;
 import com.faryard.api.DTO.UserProfileDTO;
+import com.faryard.api.DTO.node.NodeResponseStatus;
+import com.faryard.api.DTO.node.NodeSensorStatusResponse;
+import com.faryard.api.DTO.node.SensorsStatus;
+import com.faryard.api.facades.NodeFacade;
 import com.faryard.api.facades.UserFacade;
+import com.faryard.api.facades.exception.ExceptionUserNotAllowed;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -21,6 +27,8 @@ public class ApiBaseController {
 
     @Autowired
     UserFacade userFacade;
+    @Autowired
+    NodeFacade nodeFacade;
 
     @GetMapping("/test")
     public String testMethod(){
@@ -41,6 +49,20 @@ public class ApiBaseController {
     @GetMapping("/mynodes")
     public List<UserNodeDTO> getUserNodes(){
         return userFacade.getMyNodes();
+    }
+
+    @GetMapping("/nodesensors")
+    public NodeSensorStatusResponse getNodeSensors(@RequestParam String nodeId)  {
+        try {
+            userFacade.isUserAllowedForNode(nodeId);
+            return nodeFacade.nodeSensorsStatus(nodeId);
+        } catch (ExceptionUserNotAllowed exceptionUserNotAllowed) {
+            NodeSensorStatusResponse response = new NodeSensorStatusResponse();
+            response.setStatus(NodeResponseStatus.ERROR);
+            response.setMessage("User is not allowed");
+            return response;
+        }
+
     }
 
 }

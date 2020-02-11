@@ -110,6 +110,17 @@ function displayNodeOverview(nodeid){
     }
     var lastUpdate = $.timeago(node.lastPingDate)
     $("#lastUpdate").html(lastUpdate)
+
+    $("#modal").modal('show')
+
+    getSensors(node.nodeId)
+        .then((result) => {
+            debugger;
+            hideModal()
+        })
+        .catch(()=>{
+            hideModal()
+        })
 }
 function updateNode(node){
 
@@ -136,12 +147,12 @@ function updateNode(node){
 }
 
 var updateNodes = function(){
-    console.log("Updating nodes...")
+    //console.log("Updating nodes...")
     getMyNodes().then(results => {
         $(results).each(function(){
             updateNode(this)
         })
-        console.info("Update complete: ", results)
+        //console.info("Update complete: ", results)
     })
 }
 
