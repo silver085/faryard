@@ -108,15 +108,7 @@ function displayNodeOverview(selectedNodeId) {
             $("#page_head").html("Node details")
             getSensors(selectedNodeId)
                 .then((result) => {
-                    if(result.sensorsStatus){
-                        var temperature = result.sensorsStatus.hygrometer.temperature + "°"
-                        var humidity = result.sensorsStatus.hygrometer.humidity + "%"
-                        $("#temp_box").html(temperature)
-                        $("#humidity_box").html(humidity)
-                    } else {
-                        $("#temp_box").html("NA")
-                        $("#humidity_box").html("NA")
-                    }
+                    updateSensorsBox(result.sensorsStatus)
 
                     hideModal()
                 })
@@ -198,4 +190,111 @@ function showHome() {
 
         })
     })
+}
+
+function updateSensorsBox(sensors){
+    var hygrometer = sensors.hygrometer
+    var adsList = optional(sensors.ads, [])
+    var relays = optional(sensors.relays, [])
+    var sensorbox = $("#sensorsbox")
+    //hygrometer
+    if(hygrometer){
+        var temperature = optional(hygrometer.temperature, 0)
+
+        var temperatureIcon = "<i class=\"fas fa-temperature-low\"></i>"
+        if(temperature > 20)
+            temperatureIcon = "<i class=\"fas fa-temperature-high\"></i>"
+        if($("#tempbox").length === 0){
+            $(sensorbox).append("<div id='tempbox' class=\"col-md-3 col-sm-5 col-6\">\n" +
+                "            <div id=\"tempboxcontent\" class=\"info-box\">\n" +
+                "              <span id='temperatureicon' class=\"info-box-icon bg-info\">"+temperatureIcon+"</span>\n" +
+                "              <div class=\"info-box-content\">\n" +
+                "                <span class=\"info-box-text\">Temperature</span>\n" +
+                "                <h2 id='temperaturevalue' class=\"info-box-number\">"+temperature+"°</h2>\n" +
+                "              </div>\n" +
+                "            </div>\n" +
+                "          </div>")
+        } else {
+
+            $("#temperatureicon").html(temperatureIcon)
+            $("#temperaturevalue").html(temperature + "°")
+        }
+
+        //HUMIDITY
+        var humidityIcon = "<i class=\"fas fa-percent\"></i>"
+        var humidityValue = optional(sensors.hygrometer.humidity, 0)
+        if($("#humiditybox").length === 0){
+            $(sensorbox).append("<div id='humiditybox' class=\"col-md-3 col-sm-5 col-6\">\n" +
+                "            <div id=\"humidityboxcontent\" class=\"info-box\">\n" +
+                "              <span id='humidityboxicon' class=\"info-box-icon bg-info\">"+humidityIcon+"</span>\n" +
+                "              <div class=\"info-box-content\">\n" +
+                "                <span class=\"info-box-text\">Humidity</span>\n" +
+                "                <h2 id='humidityvalue' class=\"info-box-number\">"+humidityValue+"°</h2>\n" +
+                "              </div>\n" +
+                "            </div>\n" +
+                "          </div>")
+        } else {
+            $("#humidityvalue").html(humidityValue + "%")
+        }
+
+
+    }
+
+    //ads
+
+    _.each(adsList, (ads) => {
+        console.log(ads)
+        var adsName = optional(ads.name, "")
+        var evaluation = optional(ads.evaluation, {})
+        var representation = optional(getRepresentation(evaluation, adsName), {icon: null, text: "NA", image: null})
+        ads.percentage = parseFloat(ads.percentage).toFixed(0) + " %";
+        if($("#" + adsName + "box").length === 0){
+            $(sensorbox).append("<div id='"+adsName+"box' class=\"col-md-3 col-sm-5 col-6\">\n" +
+                "            <div id='"+adsName+"infobox' class=\"info-box\">\n" +
+                "              <span id=''"+adsName+"reprIcon' class=\"info-box-icon bg-info\">"+representation.icon+"</span>\n" +
+                "              <div class=\"info-box-content\">\n" +
+                "                <span id='"+adsName+"reprText' class=\"info-box-text\">"+representation.text+"<small> ("+ads.percentage+") </small></span>\n" +
+                "                <h2 id=''"+adsName+"reprImage' class=\"info-box-number\">"+representation.image+"</h2>\n" +
+                "              </div>\n" +
+                "            </div>\n" +
+                "          </div>")
+        } else {
+            $("#" + adsName + "reprIcon").html(representation.icon)
+            $("#" + adsName + "reprText").html(representation.text+"<small> ("+ads.percentage+") </small></span>\n")
+            $("#" + adsName + "reprImage").html(representation.image)
+
+        }
+    })
+
+}
+
+
+function getRepresentation(evaluation, adsName){
+  var output = {
+      icon: null,
+      text: "NA",
+      image: null
+  }
+
+  if(adsName.startsWith("light")){
+      output.icon = "<i class=\"fas fa-lightbulb\"></i>"
+      if(evaluation.evaluationInteger >= 0 && evaluation.evaluationInteger <= 2){
+          output.image = "<i class=\"fas fa-cloud\"></i>"
+      } else if(evaluation.evaluationInteger > 2 && evaluation.evaluationInteger <=5){
+          output.image = "<i class=\"fas fa-sun\"></i>"
+      }
+  }
+  if(adsName.startsWith("moisture")){
+      output.icon = "<i class=\"fas fa-seedling\"></i>"
+      if(evaluation.evaluationInteger === 0){
+          output.image = "<i class=\"fas fa-shower\"></i>"
+      } else if(evaluation.evaluationInteger === 1){
+          output.image = "<i class=\"fas fa-tint\"></i>"
+      } else if(evaluation.evaluationInteger === 2 || evaluation.evaluationInteger === 3){
+          output.image = "<i class=\"fas fa-water\"></i>"
+      }
+  }
+
+  output.text = evaluation.evaluation
+  return output
 }

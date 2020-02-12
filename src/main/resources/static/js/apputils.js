@@ -177,3 +177,9 @@ function getSensors(nodeid){
         })
     }))
 }
+
+function optional(val, optional) {
+    if(val)
+        return val
+    return optional
+}

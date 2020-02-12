@@ -1,19 +1,18 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <meta content="ie=edge" http-equiv="x-ua-compatible">
 
     <title>Faryard Gateway | Dashboard</title>
 
     <!-- Font Awesome Icons -->
-    <link rel="stylesheet" href="/static/plugins/fontawesome-free/css/all.min.css">
+    <link href="/static/plugins/fontawesome-free/css/all.min.css" rel="stylesheet">
     <!-- IonIcons -->
-    <link rel="stylesheet" href="/static/css/ionicons.min.css">
+    <link href="/static/css/ionicons.min.css" rel="stylesheet">
     <!-- Theme style -->
-    <link rel="stylesheet" href="/static/css/adminlte.min.css">
+    <link href="/static/css/adminlte.min.css" rel="stylesheet">
     <!-- Google Font: Source Sans Pro -->
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
 </head>
@@ -42,7 +41,7 @@ to get the desired effect
                 <a class="nav-link" data-widget="pushmenu" href="#"><i class="fas fa-bars"></i></a>
             </li>
             <li class="nav-item d-none d-sm-inline-block">
-                <a href="/admin/panel" class="nav-link">Home</a>
+                <a class="nav-link" href="/admin/panel">Home</a>
             </li>
         </ul>
 
@@ -57,10 +56,10 @@ to get the desired effect
                 <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
                     <span class="dropdown-item dropdown-header" id="notificationscounter"></span>
                     <div class="dropdown-divider"></div>
-                   <!-- <a href="#" class="dropdown-item">
-                        <i class="fas fa-envelope mr-2"></i> 4 new messages
-                        <span class="float-right text-muted text-sm">3 mins</span>
-                    </a>-->
+                    <!-- <a href="#" class="dropdown-item">
+                         <i class="fas fa-envelope mr-2"></i> 4 new messages
+                         <span class="float-right text-muted text-sm">3 mins</span>
+                     </a>-->
                     <div class="dropdown-divider"></div>
                     <!--<a href="#" class="dropdown-item">
                         <i class="fas fa-users mr-2"></i> 8 friend requests
@@ -69,7 +68,7 @@ to get the desired effect
                 </div>
             </li>
             <li class="nav-item">
-                <a class="nav-link" data-widget="control-sidebar" data-slide="true" href="#"><i
+                <a class="nav-link" data-slide="true" data-widget="control-sidebar" href="#"><i
                         class="fas fa-th-large"></i></a>
             </li>
         </ul>
@@ -79,8 +78,9 @@ to get the desired effect
     <!-- Main Sidebar Container -->
     <aside class="main-sidebar sidebar-dark-primary elevation-4">
         <!-- Brand Logo -->
-        <a href="/admin/panel" class="brand-link">
-            <img src="/static/img/faryardlogo.png" alt="FarYard Gateway Administrator Panel" class="brand-image img-circle elevation-3"
+        <a class="brand-link" href="/admin/panel">
+            <img alt="FarYard Gateway Administrator Panel" class="brand-image img-circle elevation-3"
+                 src="/static/img/faryardlogo.png"
                  style="opacity: .8">
             <span class="brand-text font-weight-light">Faryard Panel</span>
         </a>
@@ -93,17 +93,18 @@ to get the desired effect
 
                 </div>
                 <div class="info">
-                    <a href="/admin/panel" class="d-block" id="useremail"></a>
+                    <a class="d-block" href="/admin/panel" id="useremail"></a>
                 </div>
             </div>
 
             <!-- Sidebar Menu -->
             <nav class="mt-2">
-                <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+                <ul class="nav nav-pills nav-sidebar flex-column" data-accordion="false" data-widget="treeview"
+                    role="menu">
                     <!-- Add icons to the links using the .nav-icon class
                          with font-awesome or any other icon font library -->
                     <li class="nav-item has-treeview menu-open">
-                        <a href="#" class="nav-link active">
+                        <a class="nav-link active" href="#">
                             <i class="nav-icon fas fa-tachometer-alt"></i>
                             <p>
                                 Node Network
@@ -131,12 +132,14 @@ to get the desired effect
                 <div class="row mb-2">
                     <div class="col-sm-6">
 
-                        <h1 id="page_head" class="m-0 text-dark"><a style="" class="fa fa-arrow-left" id="backbutton" href="#" onclick="showHome()"></a>&nbsp;&nbsp;Gateway Dashboard</h1>
+                        <h1 class="m-0 text-dark" id="page_head"><a class="fa fa-arrow-left" href="#" id="backbutton"
+                                                                    onclick="showHome()" style=""></a>&nbsp;&nbsp;Gateway
+                            Dashboard</h1>
                     </div><!-- /.col -->
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
 
-                            <li id="pagetitle_header" class="breadcrumb-item active">Home</li>
+                            <li class="breadcrumb-item active" id="pagetitle_header">Home</li>
                         </ol>
                     </div><!-- /.col -->
                 </div><!-- /.row -->
@@ -147,7 +150,7 @@ to get the desired effect
         <!-- Main content -->
         <div class="content">
             <div class="container-fluid">
-                <div class="row"id="nodeoverview">
+                <div class="row" id="nodeoverview">
                     <div class="col-lg-12">
 
                         <div class="card" id="mainoverview">
@@ -203,7 +206,11 @@ to get the desired effect
                                     <dt class="col-sm-4">Created On</dt>
                                     <dd class="col-sm-8" id="createdOn"></dd>
                                     <dt class="col-sm-4">Status</dt>
-                                    <dd class="col-sm-8" id="nodeStatus"><a style="font-weight: bold;color:white;width:133px;" id="buttonOnline"  class="btn btn-block btn-success btn-xs">Online</a><a style="font-weight: bold;color:white;width:133px;" id="buttonOffline"  class="btn btn-block btn-danger btn-xs">Offline</a></dd>
+                                    <dd class="col-sm-8" id="nodeStatus"><a class="btn btn-block btn-success btn-xs"
+                                                                            id="buttonOnline"
+                                                                            style="font-weight: bold;color:white;width:133px;">Online</a><a
+                                            class="btn btn-block btn-danger btn-xs" id="buttonOffline"
+                                            style="font-weight: bold;color:white;width:133px;">Offline</a></dd>
                                     <dt class="col-sm-4">Last update</dt>
                                     <dd class="col-sm-8" id="lastUpdate"></dd>
 
@@ -212,25 +219,16 @@ to get the desired effect
                             <!-- /.card-body -->
                         </div>
                         <!-- /.card -->
-                        <div class="row">
-                        <div class="col-sm-4 col-md-2">
-                            <div class="callout callout-info">
-                                <h6>Temperature</h6>
+                        <h5 class="mb-2" id="sensors_header">Sensors</h5>
+                        <div class="row" id="sensorsbox">
 
-                                <h3 id="temp_box">NA</h3>
-                            </div>
-                        </div>
-                            <div class="col-sm-4 col-md-2">
-                                <div class="callout callout-info">
-                                    <h6>Humidity</h6>
 
-                                    <h3 id="humidity_box">NA</h3>
-                                </div>
-                            </div>
-
+                            <!-- /.col -->
                         </div>
 
 
+
+                        <!--.-->
                     </div>
                     <!-- /.col-md-6 -->
 
