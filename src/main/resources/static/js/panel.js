@@ -266,8 +266,51 @@ function updateSensorsBox(sensors){
         }
     })
 
+    var c = 0;
+    _.each(relays, (relay) => {
+        debugger;
+        var isOn = optional(relay.status, false)
+        var lastUpdate = optional(relay.lastUpdate, new Date())
+        var adsName = "relay" + c
+        var representation = getRelayRepresentation(relay, c)
+        var status = isOn ? "On" : "Off"
+        if($("#" + adsName + "box").length === 0){
+            $(sensorbox).append("<div id='"+adsName+"box' class=\"col-md-3 col-sm-5 col-6\">\n" +
+                "            <div id='"+adsName+"infobox' class=\"info-box\">\n" +
+                "              <span id=''"+adsName+"reprIcon' class=\"info-box-icon bg-info\">"+representation.icon+"</span>\n" +
+                "              <div class=\"info-box-content\">\n" +
+                "                <span id='"+adsName+"reprText' class=\"info-box-text\">"+representation.text+"<small> ("+ads.percentage+") </small></span>\n" +
+                "                <h2 id=''"+adsName+"reprImage' class=\"info-box-number\">"+representation.image+"</h2>\n" +
+                "              </div>\n" +
+                "            </div>\n" +
+                "          </div>")
+        } else {
+            $("#" + adsName + "reprIcon").html(representation.icon)
+            $("#" + adsName + "reprText").html(representation.text+"<small> ("+status+") </small></span>\n")
+            $("#" + adsName + "reprImage").html(representation.image)
+
+        }
+        c++;
+    })
+
+    debugger;
 }
 
+function getRelayRepresentation(relay, index){
+    var output = {
+        icon: null,
+        text: "NA",
+        image: null
+    }
+    if(optional(relay.status, false)){
+        output.image = "<i class=\"fas fa-toggle-on\"></i>"
+    } else {
+        output.image = "<i class=\"fas fa-toggle-off\"></i>"
+    }
+    output.icon = "<i class=\"fab fa-superpowers\"></i>"
+    output.text = "Irrigator (" + (index+1) + ")"
+    return output
+}
 
 function getRepresentation(evaluation, adsName){
   var output = {
