@@ -268,7 +268,7 @@ function updateSensorsBox(sensors){
 
     var c = 0;
     _.each(relays, (relay) => {
-        debugger;
+
         var isOn = optional(relay.status, false)
         var lastUpdate = optional(relay.lastUpdate, new Date())
         var adsName = "relay" + c
@@ -279,7 +279,7 @@ function updateSensorsBox(sensors){
                 "            <div id='"+adsName+"infobox' class=\"info-box\">\n" +
                 "              <span id=''"+adsName+"reprIcon' class=\"info-box-icon bg-info\">"+representation.icon+"</span>\n" +
                 "              <div class=\"info-box-content\">\n" +
-                "                <span id='"+adsName+"reprText' class=\"info-box-text\">"+representation.text+"<small> ("+ads.percentage+") </small></span>\n" +
+                "                <span id='"+adsName+"reprText' class=\"info-box-text\">"+representation.text+"<small> ("+status+") </small></span>\n" +
                 "                <h2 id=''"+adsName+"reprImage' class=\"info-box-number\">"+representation.image+"</h2>\n" +
                 "              </div>\n" +
                 "            </div>\n" +
