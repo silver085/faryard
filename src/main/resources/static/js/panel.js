@@ -109,7 +109,7 @@ function displayNodeOverview(selectedNodeId) {
             getSensors(selectedNodeId)
                 .then((result) => {
                     updateSensorsBox(result.sensorsStatus)
-
+                    showGraphs(selectedNodeId, null , null, null)
                     hideModal()
                 })
                 .catch(() => {

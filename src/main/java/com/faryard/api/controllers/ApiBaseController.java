@@ -1,5 +1,6 @@
 package com.faryard.api.controllers;
 
+import com.faryard.api.DTO.GraphicElementsDTO;
 import com.faryard.api.DTO.UserNodeDTO;
 import com.faryard.api.DTO.UserProfileDTO;
 import com.faryard.api.DTO.node.NodeResponseStatus;
@@ -29,6 +30,7 @@ public class ApiBaseController {
     UserFacade userFacade;
     @Autowired
     NodeFacade nodeFacade;
+
 
     @GetMapping("/test")
     public String testMethod(){
@@ -63,6 +65,18 @@ public class ApiBaseController {
             return response;
         }
 
+    }
+    @GetMapping("/nodegraphs")
+    public GraphicElementsDTO getGraph(@RequestParam String nodeId, @RequestParam String timespan, @RequestParam String startDate, @RequestParam String endDate){
+        try {
+            userFacade.isUserAllowedForNode(nodeId);
+            return nodeFacade.buildGraph(nodeId, timespan, startDate, endDate);
+        } catch (ExceptionUserNotAllowed exceptionUserNotAllowed) {
+            GraphicElementsDTO response = new GraphicElementsDTO();
+            response.setStatus(NodeResponseStatus.ERROR.getStatus());
+            response.setMessage("User is not allowed");
+            return response;
+        }
     }
 
 }

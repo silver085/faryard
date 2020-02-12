@@ -178,6 +178,18 @@ function getSensors(nodeid){
     }))
 }
 
+function getGraph(nodeid, timespan, startDate, endDate){
+    data = {nodeId: nodeid, timespan: timespan, startDate: startDate, endDate: endDate}
+    return new Promise(((resolve, reject) => {
+        getSecure("/api/v1/nodegraphs",data, function(data){
+            resolve(data)
+        }, function (){
+            reject()
+        })
+
+    }))
+}
+
 function optional(val, optional) {
     if(val)
         return val

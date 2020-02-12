@@ -1,11 +1,13 @@
 package com.faryard.api.facades;
 
 
+import com.faryard.api.DTO.GraphicElementsDTO;
 import com.faryard.api.DTO.MarkActionDoneRequest;
 import com.faryard.api.DTO.node.NodeExecuteAction;
 import com.faryard.api.DTO.node.*;
 import com.faryard.api.services.impl.exceptions.NodeAlreadyRegisteredException;
 import com.faryard.api.services.impl.exceptions.NodeNotFoundException;
+import com.faryard.api.services.impl.node.NodeHistoryService;
 import com.faryard.api.services.impl.node.NodeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -14,6 +16,9 @@ import org.springframework.stereotype.Component;
 public class NodeFacade {
     @Autowired
     NodeService nodeService;
+    @Autowired
+    NodeHistoryService nodeHistoryService;
+
     public NodeSimpleResponse registerNode(RegisterNodeRequest request) {
         try {
             return nodeService.registerNode(request);
@@ -57,5 +62,9 @@ public class NodeFacade {
 
     public NodeSimpleResponse markActionAsDone(MarkActionDoneRequest actionDoneRequest) {
         return nodeService.markActionDone(actionDoneRequest);
+    }
+
+    public GraphicElementsDTO buildGraph(String nodeId, String timespan, String startDate, String endDate) {
+        return nodeHistoryService.getNodeHistoryWithTimeSpan(nodeId, timespan, startDate, endDate);
     }
 }
