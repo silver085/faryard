@@ -6,7 +6,7 @@ function showGraphs(nodeId, timespan, start, end) {
 
     getGraph(nodeId, timespan, start, end)
         .then((result) => {
-            console.log(result)
+
             printGraphDataTemperatures(optional(result.data, []))
         })
         .catch(() => {

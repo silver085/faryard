@@ -86,7 +86,7 @@ function postSecure(url, data, callback, errorCallback){
         errorCallback(xhr.response)
     }
 
-    xhr.send(data);
+    xhr.send(JSON.stringify(data));
 }
 
 function postRequest(url, data, callback, errorCallback) {
@@ -187,6 +187,17 @@ function getGraph(nodeid, timespan, startDate, endDate){
             reject()
         })
 
+    }))
+}
+
+function postSwitchRelay(nodeid, relayindex, status){
+    data = {nodeId: nodeid, relayIndex: relayindex, status: status}
+    return new Promise(((resolve, reject) => {
+        postSecure("/api/v1/switchrelay", data, function(data){
+            resolve(data)
+        }, function(){
+            reject()
+        })
     }))
 }
 

@@ -94,8 +94,6 @@ function displayNodeOverview(selectedNodeId) {
 
     $("#menu_" + selectedNodeId).toggleClass("active")
 
-
-    console.log("Node overview ", selectedNodeId)
     var node = _.find(window.nodes, n => {
         return n.nodeId === selectedNodeId
     })
@@ -108,6 +106,7 @@ function displayNodeOverview(selectedNodeId) {
             $("#page_head").html("Node details")
             getSensors(selectedNodeId)
                 .then((result) => {
+                    window.selectedSensors = result
                     updateSensorsBox(result.sensorsStatus)
                     showGraphs(selectedNodeId, null , null, null)
                     hideModal()
@@ -180,6 +179,7 @@ var updateNodes = function () {
 function showHome() {
     window.selectedScreen = "home"
     window.selectedNodeId = null
+    window.selectedSensors = null
     $("#nodedetails").fadeOut("quick", function () {
         $("#backbutton").hide()
         $("#nodedetails").hide()
@@ -243,7 +243,7 @@ function updateSensorsBox(sensors){
     //ads
 
     _.each(adsList, (ads) => {
-        console.log(ads)
+
         var adsName = optional(ads.name, "")
         var evaluation = optional(ads.evaluation, {})
         var representation = optional(getRepresentation(evaluation, adsName), {icon: null, text: "NA", image: null})
@@ -275,7 +275,7 @@ function updateSensorsBox(sensors){
         var representation = getRelayRepresentation(relay, c)
         var status = isOn ? "On" : "Off"
         if($("#" + adsName + "box").length === 0){
-            $(sensorbox).append("<div id='"+adsName+"box' class=\"col-md-3 col-sm-5 col-6\">\n" +
+            $(sensorbox).append("<div id='"+adsName+"box' class=\"col-md-3 col-sm-5 col-6\"\">\n" +
                 "            <div id='"+adsName+"infobox' class=\"info-box\">\n" +
                 "              <span id=''"+adsName+"reprIcon' class=\"info-box-icon bg-info\">"+representation.icon+"</span>\n" +
                 "              <div class=\"info-box-content\">\n" +
@@ -284,6 +284,9 @@ function updateSensorsBox(sensors){
                 "              </div>\n" +
                 "            </div>\n" +
                 "          </div>")
+
+            $("#"+adsName+"box").attr('onclick', 'deployCommand('+c+', \'switchrelay\')')
+
         } else {
             $("#" + adsName + "reprIcon").html(representation.icon)
             $("#" + adsName + "reprText").html(representation.text+"<small> ("+status+") </small></span>\n")
@@ -340,4 +343,75 @@ function getRepresentation(evaluation, adsName){
 
   output.text = evaluation.evaluation
   return output
+}
+
+function displayModal(title, text, onConfirm){
+    var modalHtml = "<div id=\"question\" class=\"modal fade show\" id=\"modal-sm\" style=\"display: block;\" aria-modal=\"true\">\n" +
+        "        <div class=\"modal-dialog modal-sm\">\n" +
+        "          <div class=\"modal-content\">\n" +
+        "            <div class=\"modal-header\">\n" +
+        "              <h4 class=\"modal-title\">"+title+"</h4>\n" +
+        "              <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\">\n" +
+        "                <span aria-hidden=\"true\">×</span>\n" +
+        "              </button>\n" +
+        "            </div>\n" +
+        "            <div class=\"modal-body\">\n" +
+        "              <p>"+text+"</p>\n" +
+        "            </div>\n" +
+        "            <div class=\"modal-footer justify-content-between\">\n" +
+        "              <button id='closeModal' type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Cancel</button>\n" +
+        "              <button id=\"confirmModal\" type=\"button\" class=\"btn btn-primary\">Confirm</button>\n" +
+        "            </div>\n" +
+        "          </div>\n" +
+        "          <!-- /.modal-content -->\n" +
+        "        </div>\n" +
+        "        <!-- /.modal-dialog -->\n" +
+        "      </div>"
+    $("body").append(modalHtml)
+    $("#closeModal").click(()=>{
+        $("#question").remove()
+    })
+    $("#confirmModal").click(()=>{
+        $("#question").remove()
+        onConfirm()
+    })
+}
+
+function deployCommand(id, command){
+    if(command === "switchrelay"){
+
+        var relayStatus = window.selectedSensors.sensorsStatus.relays[id].status
+        var switchCommand = relayStatus ? "OFF":"ON"
+        displayModal("Confirm action", "This will switch " + switchCommand + " the relay "+ (id+1) + "\nand will have priority on normal actions to node\nContinue?",function(){
+            console.log("Action confirmed")
+            postSwitchRelay(window.selectedNodeId, id, !relayStatus)
+                .then((data)=>{
+                    if(data.message === "OK"){
+                        Toast.fire({
+                            type: 'success',
+                            title: "Your action has been deployed :)"
+                        });
+                    } else {
+                        Toast.fire({
+                            type: 'error',
+                            title: "Error deploying action :("
+                        });
+                    }
+
+                })
+                .catch(()=>{
+                    Toast.fire({
+                        type: 'error',
+                        title: "Error deploying action :("
+                    });
+                })
+        })
+    } else if(command === "directcommand"){
+
+    }
+}
+
+function getSelectedNode(){
+    var selectedNodeId = window.selectedNodeId
+    return _.filter(window.nodes, (n) => n.nodeId===selectedNodeId)
 }

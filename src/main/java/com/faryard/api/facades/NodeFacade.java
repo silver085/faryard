@@ -3,6 +3,8 @@ package com.faryard.api.facades;
 
 import com.faryard.api.DTO.GraphicElementsDTO;
 import com.faryard.api.DTO.MarkActionDoneRequest;
+import com.faryard.api.DTO.SwitchRelayRequest;
+import com.faryard.api.DTO.SwitchRelayResponse;
 import com.faryard.api.DTO.node.NodeExecuteAction;
 import com.faryard.api.DTO.node.*;
 import com.faryard.api.services.impl.exceptions.NodeAlreadyRegisteredException;
@@ -66,5 +68,9 @@ public class NodeFacade {
 
     public GraphicElementsDTO buildGraph(String nodeId, String timespan, String startDate, String endDate) {
         return nodeHistoryService.getNodeHistoryWithTimeSpan(nodeId, timespan, startDate, endDate);
+    }
+
+    public SwitchRelayResponse switchRelayOn(SwitchRelayRequest request) {
+       return nodeService.switchRelayOn(request);
     }
 }

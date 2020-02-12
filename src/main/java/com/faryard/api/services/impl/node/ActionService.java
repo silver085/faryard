@@ -24,10 +24,13 @@ public class ActionService  {
     @Autowired
     NodeActionRepository nodeActionRepository;
 
-    public void saveActionForNode(Node node, NodeExecuteAction nodeAction) throws ExceptionNodeStillPerformingException {
-        if(nodeActionRepository.findByConfirmedIsFalseAndNodeId(nodeAction.getNodeId()).size() > 0){
-            throw new ExceptionNodeStillPerformingException();
+    public void saveActionForNode(Node node, NodeExecuteAction nodeAction, boolean force) throws ExceptionNodeStillPerformingException {
+        if(!force){
+            if(nodeActionRepository.findByConfirmedIsFalseAndNodeId(nodeAction.getNodeId()).size() > 0){
+                throw new ExceptionNodeStillPerformingException();
+            }
         }
+
         NodeAction newAction = new NodeAction();
         newAction.setNodeId(node.getId());
         newAction.setActionCommitDate(new Date());
@@ -35,6 +38,8 @@ public class ActionService  {
         newAction.setAction(Action.valueOf(nodeAction.getAction()));
         nodeActionRepository.save(newAction);
     }
+
+
 
     public String getLastActionForNode(Node node) {
         List<NodeAction> actions = nodeActionRepository.findByConfirmedIsFalseAndNodeId(node.getId());
@@ -68,6 +73,18 @@ public class ActionService  {
             nodeActionRepository.save(action);
         } else {
             throw new ExceptionActionNotFound();
+        }
+    }
+
+    public void switchRelay(Node node, String relayIndex, Boolean status) {
+        NodeExecuteAction action = new NodeExecuteAction();
+        action.setAction(Action.RELAY.getAction());
+        String command = status ? "ON" : "OFF";
+        action.setNodeCommand(relayIndex + " " + command);
+        try {
+            saveActionForNode(node, action, true);
+        } catch (ExceptionNodeStillPerformingException e) {
+            logger.info("Cannot execute action: {}", e.getMessage());
         }
     }
 }

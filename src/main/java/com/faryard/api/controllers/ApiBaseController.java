@@ -1,8 +1,6 @@
 package com.faryard.api.controllers;
 
-import com.faryard.api.DTO.GraphicElementsDTO;
-import com.faryard.api.DTO.UserNodeDTO;
-import com.faryard.api.DTO.UserProfileDTO;
+import com.faryard.api.DTO.*;
 import com.faryard.api.DTO.node.NodeResponseStatus;
 import com.faryard.api.DTO.node.NodeSensorStatusResponse;
 import com.faryard.api.DTO.node.SensorsStatus;
@@ -12,10 +10,7 @@ import com.faryard.api.facades.exception.ExceptionUserNotAllowed;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Locale;
@@ -75,6 +70,19 @@ public class ApiBaseController {
             GraphicElementsDTO response = new GraphicElementsDTO();
             response.setStatus(NodeResponseStatus.ERROR.getStatus());
             response.setMessage("User is not allowed");
+            return response;
+        }
+    }
+
+    @PostMapping("/switchrelay")
+    public SwitchRelayResponse switchRelay(@RequestBody SwitchRelayRequest request){
+        try {
+            userFacade.isUserAllowedForNode(request.getNodeId());
+            return nodeFacade.switchRelayOn(request);
+        } catch (ExceptionUserNotAllowed exceptionUserNotAllowed) {
+            SwitchRelayResponse response = new SwitchRelayResponse();
+            response.setMessage("Error, user is not allowed");
+            response.setNodeId(request.getNodeId());
             return response;
         }
     }

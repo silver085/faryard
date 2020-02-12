@@ -3,6 +3,8 @@ package com.faryard.api.services.impl.node;
 
 import com.faryard.api.DTO.GraphicElementsDTO;
 import com.faryard.api.DTO.MarkActionDoneRequest;
+import com.faryard.api.DTO.SwitchRelayRequest;
+import com.faryard.api.DTO.SwitchRelayResponse;
 import com.faryard.api.DTO.node.NodeExecuteAction;
 import com.faryard.api.DTO.node.*;
 import com.faryard.api.domain.node.Node;
@@ -159,7 +161,7 @@ public class NodeService {
 
         if(node!=null && node.getNodeStatus() == NodeStatus.Online){
             try {
-                actionService.saveActionForNode(node, nodeAction);
+                actionService.saveActionForNode(node, nodeAction, false);
                 node.setLastActionCommittedDate(new Date());
                 nodeRepository.save(node);
                 response.setNodeId(node.getId());
@@ -250,4 +252,20 @@ public class NodeService {
         return new ArrayList<>();
     }
 
+    public SwitchRelayResponse switchRelayOn(SwitchRelayRequest request) {
+        SwitchRelayResponse response = new SwitchRelayResponse();
+        Node node = nodeRepository.findById(request.getNodeId()).orElse(null);
+        if(node != null){
+            actionService.switchRelay(node, request.getRelayIndex(), request.getStatus());
+            response.setNodeId(node.getId());
+            response.setMessage("OK");
+            response.setRelayIndex(Integer.parseInt(request.getRelayIndex()));
+        } else {
+            response.setNodeId(node.getId());
+            response.setMessage("Node not found");
+            response.setRelayIndex(Integer.parseInt(request.getRelayIndex()));
+        }
+        return response;
+
+    }
 }
