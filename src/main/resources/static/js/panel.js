@@ -293,7 +293,7 @@ function updateSensorsBox(sensors){
         c++;
     })
 
-    debugger;
+
 }
 
 function getRelayRepresentation(relay, index){
