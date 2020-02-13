@@ -86,9 +86,12 @@ public class NodeService {
         if (ipAddress == null) {
             ipAddress = servletRequest.getRemoteAddr();
         }
-        node.setNodeWanIP(ipAddress);
-        NodeGeoLocalization nodeGeoLocalization = ipGeolocationService.getLocation(ipAddress);
-        node.setNodeGeoLocalization(nodeGeoLocalization);
+        if(!node.getNodeWanIP().equals(ipAddress) || node.getNodeGeoLocalization() == null){
+            node.setNodeWanIP(ipAddress);
+            NodeGeoLocalization nodeGeoLocalization = ipGeolocationService.getLocation(ipAddress);
+            node.setNodeGeoLocalization(nodeGeoLocalization);
+        }
+
         nodeRepository.save(node);
         NodeSimpleResponse response = new NodeSimpleResponse();
         response.setNodeId(node.getId());

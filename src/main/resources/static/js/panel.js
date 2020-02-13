@@ -122,7 +122,8 @@ function displayNodeOverview(selectedNodeId) {
     $("#nodeIp").html(node.nodeIp)
     $("#nodeId").html(node.nodeId)
     $("#createdOn").html(moment(node.creationDate).format('MMMM Do YYYY, h:mm:ss a'))
-    $("#nodeWanIp").html(node.nodeWanIp)
+    $("#nodeWanIp").html(optional(node.nodeWanIp, "NA"))
+    $("#nodeLocation").html(optional(node.nodeCityLocation, "NA") + ", " + optional(node.nodeCountryLocation, "NA"))
     if (node.online) {
         $("#buttonOffline").hide()
         $("#buttonOnline").show()
