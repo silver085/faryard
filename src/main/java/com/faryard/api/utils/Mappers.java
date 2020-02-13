@@ -78,9 +78,8 @@ public class Mappers {
     }
 
     public static SensorsStatus mapNodeToNodeStatusResponse(Node node) {
-
-
         NodeSensors sensors = node.getNodeSensors();
+        if(sensors==null) return null;
         SensorsStatus sensorsStatus = new SensorsStatus();
         sensorsStatus.setHygrometer(new HygrometerStatus());
         if(sensors.getHygrometer() != null) {
