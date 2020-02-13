@@ -41,6 +41,7 @@ public class IPGeolocationService {
 
             return localization;
         }catch (Exception e){
+            logger.error("Geolocation Service error: {} - ipAddr: {}", e.getMessage(), ipAddress);
             return null;
         }
     }
