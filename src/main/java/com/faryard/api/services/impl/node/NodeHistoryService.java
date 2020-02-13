@@ -126,6 +126,7 @@ public class NodeHistoryService {
                 }
             }
         }
+        outputList.add(list.get(list.size() -1));
         return outputList;
     }
 
