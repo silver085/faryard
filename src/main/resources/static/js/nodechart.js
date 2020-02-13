@@ -17,7 +17,7 @@ function showGraphs(nodeId, timespan, start, end) {
 
 }
 
-function printGraphDataLight(data){
+function printGraphDataLight(data) {
     var areaChartCanvas = $('#lightChart').get(0).getContext('2d')
     var labels = _.map(data, (v) => {
         return moment(v.date).format("DD/MM hh a")
@@ -29,7 +29,7 @@ function printGraphDataLight(data){
         labels: labels,
         datasets: [
             {
-                label: 'Light Exposure',
+                label: 'Light Exposure (%)',
                 backgroundColor: 'rgba(255,214,54,0.9)',
                 borderColor: 'rgba(255,255,255,0.8)',
                 pointRadius: false,
@@ -64,7 +64,7 @@ function printGraphDataLight(data){
         animation: {
             duration: 0
         },
-        tooltips:{
+        tooltips: {
             enabled: true
         }
 
@@ -100,7 +100,7 @@ function printGraphDataTemperatures(data) {
         labels: labels,
         datasets: [
             {
-                label: 'Temperatures',
+                label: 'Temperature (°C)',
                 backgroundColor: 'rgba(255,3,37,0.9)',
                 borderColor: 'rgba(255,255,255,0.8)',
                 pointRadius: false,
@@ -111,7 +111,7 @@ function printGraphDataTemperatures(data) {
                 data: temperatures
             },
             {
-                label: 'Humidity',
+                label: 'Humidity (%)',
                 backgroundColor: 'rgba(128,199,255,0.9)',
                 borderColor: 'rgba(255,255,255,0.8)',
                 pointRadius: false,
@@ -145,7 +145,7 @@ function printGraphDataTemperatures(data) {
         animation: {
             duration: 0
         },
-        tooltips:{
+        tooltips: {
             enabled: true
         }
 
@@ -165,26 +165,134 @@ function printGraphDataTemperatures(data) {
 }
 
 
-function printMoisturesGraph(data){
-    var moisturesTitles = []
-    return
-
+function printMoisturesGraph(data) {
+    var tempData = []
+    var moisturesData = []
     var labels = _.map(data, (v) => {
         return moment(v.date).format("DD/MM hh a")
     })
 
-    var moisturesData = _.map(data, (v)=>{
-        var output = []
-        _.each(v.ads, (ads) =>{
-            if(ads.name.startsWith("moisture")){
-                output.push({name: ads.name, percentage: ads.percentage, index: ads.evaluation.evaluationIndex, label: ads.evaluation.evaluation})
+    _.each(data, (d) => {
+        tempData.push(d.sensors.ads)
+    })
+    _.each(tempData, (d) => {
+        var currentArray = []
+        _.each(d, (v) => {
+            if (v.name.startsWith("moisture")) {
+                currentArray.push(v)
             }
-
         })
-        debugger
-        return output
+        moisturesData.push(currentArray)
     })
 
+    var maxLen = 0
+    _.each(moisturesData, (row) => {
+        if (row.length > maxLen) maxLen = row.length
+    })
+
+    if (window.moistureGraphs == null)
+        window.moistureGraphs = []
+
+    for (i = 0; i < maxLen; i++) {
+        var chartHtml = "             <div class=\"col-md-3\">\n" +
+            "                            <div class=\"card card-primary\">\n" +
+            "                                <div class=\"card-header\">\n" +
+            "                                    <h3 class=\"card-title\">Moisture " + (i + 1) + " History</h3>\n" +
+            "\n" +
+            "                                    <div class=\"card-tools\">\n" +
+            "                                        <button type=\"button\" class=\"btn btn-tool\" data-card-widget=\"collapse\"><i\n" +
+            "                                                class=\"fas fa-minus\"></i>\n" +
+            "                                        </button>\n" +
+            "                                        <button type=\"button\" class=\"btn btn-tool\" data-card-widget=\"remove\"><i\n" +
+            "                                                class=\"fas fa-times\"></i></button>\n" +
+            "                                    </div>\n" +
+            "                                </div>\n" +
+            "                                <div class=\"card-body\">\n" +
+            "                                    <div class=\"chart\">\n" +
+            "                                        <div class=\"chartjs-size-monitor\">\n" +
+            "                                            <div class=\"chartjs-size-monitor-expand\">\n" +
+            "                                                <div class=\"\"></div>\n" +
+            "                                            </div>\n" +
+            "                                            <div class=\"chartjs-size-monitor-shrink\">\n" +
+            "                                                <div class=\"\"></div>\n" +
+            "                                            </div>\n" +
+            "                                        </div>\n" +
+            "                                        <canvas id=\"moisture" + i + "\"\n" +
+            "                                                style=\"min-height: 250px; height: 250px; max-height: 250px; max-width: 100%; display: block;\"\n" +
+            "                                                width=\"492\" height=\"250\" class=\"chartjs-render-monitor\"></canvas>\n" +
+            "                                    </div>\n" +
+            "                                </div>\n" +
+            "                                <!-- /.card-body CHART TEMP -->\n" +
+            "\n" +
+            "\n" +
+            "                            </div>\n" +
+            "                        </div>"
 
 
+        var currentMoistureData = []
+        _.each(moisturesData, (d) => {
+            currentMoistureData.push(d[i].percentage)
+        })
+
+        var areaChartData = {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'Moisture Wetness (%)',
+                    backgroundColor: 'rgba(139,203,255,0.9)',
+                    borderColor: 'rgba(255,255,255,0.8)',
+                    pointRadius: false,
+                    pointColor: '#3b8bba',
+                    pointStrokeColor: 'rgb(255,3,37)',
+                    pointHighlightFill: '#fff',
+                    pointHighlightStroke: 'rgba(60,141,188,1)',
+                    data: currentMoistureData
+                }
+            ]
+        }
+
+        var graphbox = $("#graphbox")
+        if ($("#moisture" + i).length === 0) {
+            $(graphbox).append(chartHtml)
+            var areaChartCanvas = $('#moisture' + i).get(0).getContext('2d')
+
+            var areaChartOptions = {
+                maintainAspectRatio: false,
+                responsive: true,
+                legend: {
+                    display: true
+                },
+                scales: {
+                    xAxes: [{
+                        gridLines: {
+                            display: false,
+                        }
+                    }],
+                    yAxes: [{
+                        gridLines: {
+                            display: false,
+                        }
+                    }]
+                },
+                animation: {
+                    duration: 0
+                },
+                tooltips: {
+                    enabled: true
+                }
+
+            }
+        }
+        if (window.moistureGraphs[i] == null) {
+            window.moistureGraphs.push(new Chart(areaChartCanvas, {
+                type: 'line',
+                data: areaChartData,
+                options: areaChartOptions
+            }))
+        } else {
+            window.moistureGraphs[i].data = areaChartData
+            window.moistureGraphs[i].update()
+        }
+    }
 }
+
