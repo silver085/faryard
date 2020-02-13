@@ -11,6 +11,7 @@ import com.faryard.api.domain.node.Node;
 import com.faryard.api.domain.node.NodeAction;
 import com.faryard.api.domain.node.NodeStatus;
 import com.faryard.api.repositories.NodeRepository;
+import com.faryard.api.services.IPGeolocationService;
 import com.faryard.api.services.exceptions.ExceptionActionAlreadyConfirmed;
 import com.faryard.api.services.exceptions.ExceptionActionNotFound;
 import com.faryard.api.services.exceptions.ExceptionNodeStillPerformingException;
@@ -21,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.*;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -41,6 +43,9 @@ public class NodeService {
 
     @Autowired
     NodeHistoryService nodeHistoryService;
+
+    @Autowired
+    IPGeolocationService ipGeolocationService;
 
     public NodeSimpleResponse registerNode(RegisterNodeRequest request) throws NodeAlreadyRegisteredException{
         Node node = nodeRepository.findByNodeMACAddress(request.getNodeMacAddress()).orElse(null);
@@ -66,7 +71,7 @@ public class NodeService {
         return response;
     }
 
-    public NodeSimpleResponse nodePing(NodePingRequest request) throws NodeNotFoundException{
+    public NodeSimpleResponse nodePing(NodePingRequest request, HttpServletRequest servletRequest) throws NodeNotFoundException{
         Node node = nodeRepository.findByIdAndNodeMACAddress(request.getId(), request.getMacAddress()).orElse(null);
         if(node == null){
             throw new NodeNotFoundException("api.node.unknownnode");
@@ -76,6 +81,14 @@ public class NodeService {
         node.setNodeStatus(NodeStatus.Online);
         node.setNodeSensors(Mappers.mapSensorsFromDTO(request.getSensorsStatus()));
         node.setLastSensorUpdate(new Date());
+
+        String ipAddress = servletRequest.getHeader("X-FORWARDED-FOR");
+        if (ipAddress == null) {
+            ipAddress = servletRequest.getRemoteAddr();
+        }
+        node.setNodeWanIP(ipAddress);
+        NodeGeoLocalization nodeGeoLocalization = ipGeolocationService.getLocation(ipAddress);
+        node.setNodeGeoLocalization(nodeGeoLocalization);
         nodeRepository.save(node);
         NodeSimpleResponse response = new NodeSimpleResponse();
         response.setNodeId(node.getId());

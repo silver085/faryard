@@ -8,6 +8,8 @@ import com.faryard.api.facades.NodeFacade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+
 @RestController
 @RequestMapping("/nodeapi/")
 public class NodeController extends ApiBaseController {
@@ -15,8 +17,8 @@ public class NodeController extends ApiBaseController {
     NodeFacade nodeFacade;
 
     @PostMapping("/ping")
-    public NodeSimpleResponse nodePing(@RequestBody NodePingRequest request){
-        return nodeFacade.nodePing(request);
+    public NodeSimpleResponse nodePing(@RequestBody NodePingRequest request, HttpServletRequest servletRequest){
+        return nodeFacade.nodePing(request, servletRequest);
     }
 
     @PostMapping("/registernode")

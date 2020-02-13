@@ -14,6 +14,8 @@ import com.faryard.api.services.impl.node.NodeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.servlet.http.HttpServletRequest;
+
 @Component
 public class NodeFacade {
     @Autowired
@@ -31,9 +33,9 @@ public class NodeFacade {
         }
     }
 
-    public NodeSimpleResponse nodePing(NodePingRequest request) {
+    public NodeSimpleResponse nodePing(NodePingRequest request, HttpServletRequest servletRequest) {
         try {
-            return nodeService.nodePing(request);
+            return nodeService.nodePing(request, servletRequest);
         }catch(NodeNotFoundException e){
             NodeErrorResponse errorResponse = new NodeErrorResponse();
             errorResponse.setMessage(e.getMessage());

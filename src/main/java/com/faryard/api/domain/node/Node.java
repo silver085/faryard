@@ -1,5 +1,6 @@
 package com.faryard.api.domain.node;
 
+import com.faryard.api.DTO.node.NodeGeoLocalization;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.IndexDirection;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -22,6 +23,8 @@ public class Node {
     private Date lastActionConfirmedDate;
     private Date lastSensorUpdate;
     private NodeSensors nodeSensors;
+    private String nodeWanIP;
+    private NodeGeoLocalization nodeGeoLocalization;
 
     public String getId() {
         return id;
@@ -109,5 +112,21 @@ public class Node {
 
     public void setNodeSensors(NodeSensors nodeSensors) {
         this.nodeSensors = nodeSensors;
+    }
+
+    public String getNodeWanIP() {
+        return nodeWanIP;
+    }
+
+    public void setNodeWanIP(String nodeWanIP) {
+        this.nodeWanIP = nodeWanIP;
+    }
+
+    public NodeGeoLocalization getNodeGeoLocalization() {
+        return nodeGeoLocalization;
+    }
+
+    public void setNodeGeoLocalization(NodeGeoLocalization nodeGeoLocalization) {
+        this.nodeGeoLocalization = nodeGeoLocalization;
     }
 }

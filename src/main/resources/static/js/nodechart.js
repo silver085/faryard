@@ -22,6 +22,7 @@ function printGraphDataLight(data) {
     var labels = _.map(data, (v) => {
         return moment(v.date).format("DD/MM hh a")
     })
+    labels[labels.length -1] = "now"
     var lightPercentages = _.map(data, (v) => {
         return v.sensors.ads[0].percentage
     })
@@ -90,6 +91,7 @@ function printGraphDataTemperatures(data) {
     var labels = _.map(data, (v) => {
         return moment(v.date).format("DD/MM hh a")
     })
+    labels[labels.length -1] = "now"
     var temperatures = _.map(data, (v) => {
         return v.sensors.hygrometer.temperature
     })
@@ -171,7 +173,7 @@ function printMoisturesGraph(data) {
     var labels = _.map(data, (v) => {
         return moment(v.date).format("DD/MM hh a")
     })
-
+    labels[labels.length -1] = "now"
     _.each(data, (d) => {
         tempData.push(d.sensors.ads)
     })
