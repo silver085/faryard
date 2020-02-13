@@ -18,20 +18,33 @@ public class Mappers {
                     userNode.setCreationDate(node.getCreationDate());
                     userNode.setLastPingDate(node.getLastPingDate());
                     userNode.setOnline(node.getNodeStatus().equals(NodeStatus.Online));
+                    if(node.getNodeWanIP()!=null)
+                        userNode.setNodeWanIp(node.getNodeWanIP());
+
+                    if(node.getNodeGeoLocalization() != null){
+                        if(node.getNodeGeoLocalization().getCountryName()!=null)
+                            userNode.setNodeCountryLocation(node.getNodeGeoLocalization().getCountryName());
+                        if(node.getNodeGeoLocalization().getCityName()!=null)
+                            userNode.setNodeCityLocation(node.getNodeGeoLocalization().getCityName());
+                    }
+
                     return userNode;
                 }).collect(Collectors.toList());
     }
 
     public static NodeSensors mapSensorsFromDTO(SensorsStatus sensorsStatus) {
         NodeSensors sensors = new NodeSensors();
-
+        if(sensorsStatus == null){
+            return sensors;
+        }
         //Mapping hygrometer
         Hygrometer hygrometer = new Hygrometer();
-        hygrometer.setHumidity(sensorsStatus.getHygrometer().getHumidity());
-        hygrometer.setTemperature(sensorsStatus.getHygrometer().getTemperature());
-        sensors.setHygrometer(hygrometer);
+        if(sensorsStatus.getHygrometer()!= null) {
+            hygrometer.setHumidity(sensorsStatus.getHygrometer().getHumidity());
+            hygrometer.setTemperature(sensorsStatus.getHygrometer().getTemperature());
+            sensors.setHygrometer(hygrometer);
 
-
+        }
         //Mapping ads
         List<ADSChannel> adsChannelList = sensorsStatus.getAds().stream().map(ads -> {
             ADSChannel channel = new ADSChannel();

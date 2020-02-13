@@ -122,6 +122,7 @@ function displayNodeOverview(selectedNodeId) {
     $("#nodeIp").html(node.nodeIp)
     $("#nodeId").html(node.nodeId)
     $("#createdOn").html(moment(node.creationDate).format('MMMM Do YYYY, h:mm:ss a'))
+    $("#nodeWanIp").html(node.nodeWanIp)
     if (node.online) {
         $("#buttonOffline").hide()
         $("#buttonOnline").show()

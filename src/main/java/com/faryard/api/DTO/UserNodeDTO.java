@@ -9,6 +9,9 @@ public class UserNodeDTO {
     private Date creationDate;
     private Date lastPingDate;
     private Boolean isOnline = false;
+    private String nodeWanIp;
+    private String nodeCityLocation;
+    private String nodeCountryLocation;
 
     public String getNodeId() {
         return nodeId;
@@ -56,5 +59,29 @@ public class UserNodeDTO {
 
     public void setOnline(Boolean online) {
         isOnline = online;
+    }
+
+    public String getNodeWanIp() {
+        return nodeWanIp;
+    }
+
+    public void setNodeWanIp(String nodeWanIp) {
+        this.nodeWanIp = nodeWanIp;
+    }
+
+    public String getNodeCityLocation() {
+        return nodeCityLocation;
+    }
+
+    public void setNodeCityLocation(String nodeCityLocation) {
+        this.nodeCityLocation = nodeCityLocation;
+    }
+
+    public String getNodeCountryLocation() {
+        return nodeCountryLocation;
+    }
+
+    public void setNodeCountryLocation(String nodeCountryLocation) {
+        this.nodeCountryLocation = nodeCountryLocation;
     }
 }

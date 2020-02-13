@@ -24,18 +24,18 @@ public class IPGeolocationService {
 
     public NodeGeoLocalization getLocation(String ipAddress) {
         if(ipAddress == null) return null;
-        try (WebServiceClient client = new WebServiceClient.Builder(211364, "6OUw8lVsHFsaigcg")
+        try (WebServiceClient client = new WebServiceClient.Builder(211364, "cM03L3iiZNbH")
                 .build()) {
             InetAddress inetAddress = InetAddress.getByName(ipAddress);
             InsightsResponse response = client.insights(inetAddress);
             Country country = response.getCountry();
             City city = response.getCity();
-            Postal postal = response.getPostal();
+            //Postal postal = response.getPostal();
 
             NodeGeoLocalization localization = new NodeGeoLocalization();
             localization.setCityName(city.getName());
             localization.setCountryName(country.getName());
-            localization.setPostalCode(postal.getCode());
+            //localization.setPostalCode(postal.getCode());
 
             logger.info("Node ip [{}] - Localized: {} {} {}",ipAddress, localization.getPostalCode(), localization.getCityName(), localization.getCountryName());
 
