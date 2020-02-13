@@ -70,8 +70,10 @@ public class Mappers {
         NodeSensors sensors = node.getNodeSensors();
         SensorsStatus sensorsStatus = new SensorsStatus();
         sensorsStatus.setHygrometer(new HygrometerStatus());
-        sensorsStatus.getHygrometer().setHumidity(sensors.getHygrometer().getHumidity());
-        sensorsStatus.getHygrometer().setTemperature(sensors.getHygrometer().getTemperature());
+        if(sensors.getHygrometer() != null) {
+            sensorsStatus.getHygrometer().setHumidity(sensors.getHygrometer().getHumidity());
+            sensorsStatus.getHygrometer().setTemperature(sensors.getHygrometer().getTemperature());
+        }
 
         List<AdsStatus> adsStatuses = sensors.getAdsChannels().stream().map(channel -> {
             AdsStatus adsStatus = new AdsStatus();

@@ -1,11 +1,12 @@
 package com.faryard.api.domain.node;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class NodeSensors {
     private Hygrometer hygrometer;
-    private List<ADSChannel> adsChannels;
-    private List<RelayChannel> relayChannels;
+    private List<ADSChannel> adsChannels = new ArrayList<>();
+    private List<RelayChannel> relayChannels = new ArrayList<>();
 
     public Hygrometer getHygrometer() {
         return hygrometer;
